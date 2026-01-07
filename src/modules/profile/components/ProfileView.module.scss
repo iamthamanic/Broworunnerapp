@@ -1,0 +1,338 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--background);
+}
+
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary) 100%);
+  color: var(--primary-foreground);
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--primary-foreground);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: 0.25rem;
+}
+
+.userRole {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* Profile Tabs */
+.profileTabs {
+  display: flex;
+  gap: 8px;
+  margin-top: var(--space-md);
+}
+
+.profileTab {
+  flex: 1;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: var(--primary-foreground);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+  
+  &.profileTabActive {
+    background: var(--primary-foreground);
+    color: var(--primary);
+    border-color: var(--primary-foreground);
+  }
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-md);
+}
+
+.timeCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.timeCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--space-md);
+}
+
+.timeIcon {
+  color: var(--app-primary);
+}
+
+.timeTitle {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.timeStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+}
+
+.timeStatItem {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md);
+  background-color: var(--muted);
+  border-radius: var(--radius-md);
+}
+
+.timeStatLabel {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.timeStatValue {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--app-primary);
+  margin-bottom: 4px;
+}
+
+.timeStatTarget {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.timeEntriesSection {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-md);
+}
+
+.timeEntriesTitle {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+  margin: 0 0 var(--space-sm);
+}
+
+.timeEntriesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.timeEntry {
+  padding: var(--space-sm);
+  background-color: var(--background);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.timeEntryDate {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-bottom: 4px;
+}
+
+.timeEntryDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.timeEntryTime {
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.timeEntryDuration {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--app-primary);
+}
+
+.timeEntryBreaks {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.statsCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.statsTitle {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+  letter-spacing: 0.05em;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-md);
+  background-color: var(--muted);
+  border-radius: var(--radius-md);
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.section {
+  margin-bottom: var(--space-md);
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  margin-bottom: var(--space-sm);
+  letter-spacing: 0.05em;
+}
+
+.menuList {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  color: var(--foreground);
+  transition: background-color 0.2s ease;
+}
+
+.menuItem:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.menuItem:hover {
+  background-color: var(--muted);
+}
+
+.menuItemLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.menuIcon {
+  color: var(--muted-foreground);
+}
+
+.menuLabel {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.menuArrow {
+  color: var(--muted-foreground);
+}
+
+.logoutButton {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  border-radius: var(--radius-button);
+  padding: var(--space-md);
+  width: 100%;
+  cursor: pointer;
+  color: #ef4444;
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

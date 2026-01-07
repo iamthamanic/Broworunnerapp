@@ -1,0 +1,236 @@
+.mapTab {
+  position: relative;
+  width: 100%;
+  height: 250px; // Increased from 200px for better visibility
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--muted);
+  margin-bottom: var(--space-md);
+}
+
+.mapControls {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 10;
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.controlButton {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--foreground);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--app-primary);
+    border-color: var(--app-primary);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(60, 97, 188, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mapLoading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  color: var(--muted-foreground);
+
+  p {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+}
+
+.mapContainer {
+  height: calc(100vh - 70px);
+  width: 100%;
+  position: relative;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.mapTile1,
+.mapTile2,
+.mapTile3,
+.mapTile4 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mapTile1 {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.mapTile2 {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.mapTile3 {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.mapTile4 {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.routeOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.routeLine {
+  fill: none;
+  stroke: var(--app-primary);
+  stroke-width: 3;
+  opacity: 0.7;
+  stroke-linecap: round;
+
+  svg {
+    color: var(--app-primary);
+  }
+}
+
+.marker {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 10;
+  cursor: pointer;
+  
+  &:hover .markerPopup {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-5px);
+  }
+}
+
+.markerIcon {
+  width: 32px;
+  height: 32px;
+  background: #e74c3c;
+  border: 2px solid white;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  
+  svg {
+    transform: rotate(45deg);
+    color: white;
+  }
+}
+
+.driverMarker .markerIcon {
+  background: var(--app-primary);
+}
+
+.markerPopup {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  background: white;
+  padding: 8px 12px;
+  border-radius: var(--radius-button);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  margin-bottom: 8px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: white;
+  }
+}
+
+.popupTitle {
+  margin: 0 0 4px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.popupSubtitle {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.mapFooter {
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.footerInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+
+  svg {
+    color: var(--app-primary);
+  }
+}

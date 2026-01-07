@@ -1,0 +1,155 @@
+/* 
+ * Shared Order Card Styles
+ * Diese Datei definiert globale Styles für ALLE Order-Cards
+ * Änderungen hier wirken sich auf Halteverbot, Baustelle und Kontrollfahrt aus
+ */
+
+/* Card Wrapper - Timeline Container */
+.cardWrapper {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  margin-bottom: var(--space-sm);
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+/* Timeline Number - Runder Button mit Nummerierung */
+.timelineNumber {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--app-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  z-index: 2;
+  position: relative;
+  margin-top: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Timeline Connector - Verbindungslinie zwischen Cards */
+.timelineConnector {
+  position: absolute;
+  left: 15px;
+  top: 44px;
+  width: 2px;
+  height: calc(100% + 8px);
+  background-color: var(--app-primary);
+  z-index: 1;
+}
+
+/* Order Card - Hauptkarte */
+.orderCard {
+  flex: 1;
+  border-radius: var(--radius-card);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.orderNumber {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.timeInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* Job Type Row */
+.jobTypeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  gap: var(--space-xs);
+}
+
+/* Location */
+.location {
+  margin-bottom: var(--space-sm);
+}
+
+.locationText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.locationAddress {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-left: 20px;
+}
+
+/* Description */
+.description {
+  font-size: 0.875rem;
+  color: var(--foreground);
+  margin-bottom: var(--space-sm);
+  line-height: 1.4;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border);
+}
+
+/* Completed Badge */
+.completedBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: var(--radius-button);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  box-shadow: var(--shadow-sm);
+}

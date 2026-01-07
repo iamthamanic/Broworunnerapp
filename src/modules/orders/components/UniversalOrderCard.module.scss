@@ -1,0 +1,424 @@
+/* Universal Order Card - Einheitliches Design für alle Order-Typen */
+
+.cardWrapper {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  margin-bottom: var(--space-sm);
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+/* Timeline Number - Runder Button mit Nummerierung */
+.timelineNumber {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  z-index: 2;
+  position: relative;
+  margin-top: 12px;
+  box-shadow: var(--shadow-sm);
+  
+  &.variant-halteverbot {
+    background-color: var(--order-halteverbot-primary);
+  }
+  
+  &.variant-baustelle {
+    background-color: var(--order-baustelle-primary);
+  }
+  
+  &.variant-kontrollfahrt {
+    background-color: var(--order-kontrollfahrt-primary);
+  }
+}
+
+/* Timeline Connector - Verbindungslinie zwischen Cards */
+.timelineConnector {
+  position: absolute;
+  left: 15px;
+  top: 44px;
+  width: 2px;
+  height: calc(100% + 8px);
+  z-index: 1;
+  
+  &.variant-halteverbot {
+    background-color: var(--order-halteverbot-primary);
+  }
+  
+  &.variant-baustelle {
+    background-color: var(--order-baustelle-primary);
+  }
+  
+  &.variant-kontrollfahrt {
+    background-color: var(--order-kontrollfahrt-primary);
+  }
+}
+
+/* Order Card - Hauptkarte */
+.orderCard {
+  flex: 1;
+  border-radius: var(--radius-card);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.variant-halteverbot {
+    background-color: var(--order-halteverbot-bg);
+    border: 1px solid var(--order-halteverbot-border);
+  }
+  
+  &.variant-baustelle {
+    background-color: var(--order-baustelle-bg);
+    border: 1px solid var(--order-baustelle-border);
+  }
+  
+  &.variant-kontrollfahrt {
+    background-color: var(--order-kontrollfahrt-bg);
+    border: 1px solid var(--order-kontrollfahrt-border);
+  }
+  
+  &.cardCompleted {
+    opacity: 0.7;
+    background-color: #f5f5f5;
+    border-color: var(--border);
+  }
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.orderNumber {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.timeInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* Job Type Row */
+.jobTypeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  gap: var(--space-xs);
+}
+
+.jobType {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-button);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  
+  &.variant-halteverbot {
+    background-color: rgba(60, 97, 188, 0.15);
+    color: var(--order-halteverbot-dark);
+  }
+  
+  &.variant-baustelle {
+    background-color: rgba(60, 97, 188, 0.15);
+    color: var(--order-baustelle-dark);
+  }
+  
+  &.variant-kontrollfahrt {
+    background-color: rgba(60, 97, 188, 0.15);
+    color: var(--order-kontrollfahrt-dark);
+  }
+}
+
+.jobTypeIcon {
+  flex-shrink: 0;
+}
+
+/* Location */
+.location {
+  margin-bottom: var(--space-sm);
+}
+
+.locationText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+
+  svg {
+    flex-shrink: 0;
+  }
+  
+  .variant-halteverbot & svg {
+    color: var(--order-halteverbot-primary);
+  }
+  
+  .variant-baustelle & svg {
+    color: var(--order-baustelle-primary);
+  }
+  
+  .variant-kontrollfahrt & svg {
+    color: var(--order-kontrollfahrt-primary);
+  }
+}
+
+.locationAddress {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-left: 20px;
+}
+
+/* Description */
+.description {
+  font-size: 0.875rem;
+  color: var(--foreground);
+  margin-bottom: var(--space-sm);
+  line-height: 1.4;
+}
+
+/* Notes */
+.notes {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  padding: var(--space-xs);
+  border-radius: var(--radius-xs);
+  margin-bottom: var(--space-sm);
+  
+  &.variant-halteverbot {
+    background-color: rgba(60, 97, 188, 0.1);
+    
+    strong {
+      color: var(--order-halteverbot-dark);
+    }
+  }
+  
+  &.variant-baustelle {
+    background-color: rgba(60, 97, 188, 0.1);
+    
+    strong {
+      color: var(--order-baustelle-dark);
+    }
+  }
+  
+  &.variant-kontrollfahrt {
+    background-color: rgba(60, 97, 188, 0.1);
+    
+    strong {
+      color: var(--order-kontrollfahrt-dark);
+    }
+  }
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding-top: var(--space-sm);
+  
+  .variant-halteverbot & {
+    border-top: 1px solid rgba(60, 97, 188, 0.2);
+  }
+  
+  .variant-baustelle & {
+    border-top: 1px solid rgba(60, 97, 188, 0.2);
+  }
+  
+  .variant-kontrollfahrt & {
+    border-top: 1px solid rgba(60, 97, 188, 0.2);
+  }
+}
+
+.actionButton {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 6px;
+  background-color: white;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  &.variant-halteverbot {
+    border: 1px solid var(--order-halteverbot-border);
+    color: var(--order-halteverbot-primary);
+    
+    &:hover {
+      background-color: rgba(60, 97, 188, 0.1);
+      border-color: var(--order-halteverbot-primary);
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.variant-baustelle {
+    border: 1px solid var(--order-baustelle-border);
+    color: var(--order-baustelle-primary);
+    
+    &:hover {
+      background-color: rgba(60, 97, 188, 0.1);
+      border-color: var(--order-baustelle-primary);
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.variant-kontrollfahrt {
+    border: 1px solid var(--order-kontrollfahrt-border);
+    color: var(--order-kontrollfahrt-primary);
+    
+    &:hover {
+      background-color: rgba(60, 97, 188, 0.1);
+      border-color: var(--order-kontrollfahrt-primary);
+      transform: translateY(-1px);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  span {
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.badgeDocs {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 9px;
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.completeButton {
+  flex: 1;
+  padding: 8px 12px;
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  &.variant-halteverbot {
+    background-color: var(--order-halteverbot-primary);
+    
+    &:hover:not(:disabled) {
+      background-color: var(--order-halteverbot-dark);
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.variant-baustelle {
+    background-color: var(--order-baustelle-primary);
+    
+    &:hover:not(:disabled) {
+      background-color: var(--order-baustelle-dark);
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.variant-kontrollfahrt {
+    background-color: var(--order-kontrollfahrt-primary);
+    
+    &:hover:not(:disabled) {
+      background-color: var(--order-kontrollfahrt-dark);
+      transform: translateY(-1px);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    background: #9ca3af;
+    color: #d1d5db;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.completedBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: var(--radius-button);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  box-shadow: var(--shadow-sm);
+}
+
+.materialBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  font-size: 0.7rem;
+  font-weight: 600;
+}

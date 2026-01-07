@@ -1,0 +1,175 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-md);
+}
+
+.modalContent {
+  background: var(--background);
+  border-radius: var(--radius-modal);
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border);
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  cursor: pointer;
+  padding: var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-button);
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.toolButton {
+  background: var(--muted);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-button);
+  padding: var(--space-sm);
+  cursor: pointer;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--app-primary);
+    border-color: var(--app-primary);
+    color: white;
+  }
+
+  &.active {
+    background: var(--app-primary);
+    border-color: var(--app-primary);
+    color: white;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+}
+
+.colorPicker {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  padding: 2px;
+}
+
+.slider {
+  width: 100px;
+  cursor: pointer;
+}
+
+.canvas {
+  flex: 1;
+  width: 100%;
+  height: 400px;
+  cursor: crosshair;
+  touch-action: none;
+  background: white;
+  
+  @media (max-width: 768px) {
+    height: 300px;
+  }
+}
+
+.footer {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.deleteButton {
+  flex: 1;
+  background: white;
+  color: var(--destructive);
+  border: 2px solid var(--destructive);
+  border-radius: var(--radius-button);
+  padding: var(--space-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--destructive);
+    color: white;
+  }
+}
+
+.saveButton {
+  flex: 1;
+  background: var(--app-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  padding: var(--space-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  transition: all 0.2s;
+
+  &:hover {
+    background: #2d4a8f;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

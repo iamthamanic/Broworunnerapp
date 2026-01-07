@@ -1,0 +1,319 @@
+.infosView {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-background);
+}
+
+.header {
+  padding: 16px 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+  }
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.headerIcon {
+  color: var(--app-primary);
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.searchBox {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  font-size: 14px;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 14px 10px 40px;
+    font-size: 16px; /* Verhindert Zoom auf iOS */
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    left: 12px;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--color-surface-elevated);
+  padding: 4px;
+  border-radius: var(--radius-card);
+  overflow-x: auto;
+}
+
+.tab {
+  flex: 1;
+  min-width: fit-content;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-button);
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(78, 178, 229, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+.tabActive {
+  background: var(--app-primary);
+  color: white;
+  box-shadow: 0 2px 4px rgba(60, 97, 188, 0.3);
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--color-background);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+  }
+}
+
+.filterButton {
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--color-background);
+    border-color: var(--app-primary);
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+.filterButtonActive {
+  background: var(--app-primary);
+  color: white;
+  border-color: var(--app-primary);
+  
+  &:hover {
+    background: #2d4a8f;
+    border-color: #2d4a8f;
+  }
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.videoCard {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--color-border);
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 10px;
+  }
+}
+
+.thumbnail {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  background: var(--color-background);
+  overflow: hidden;
+}
+
+.thumbnailImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  background: var(--color-error);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+.videoInfo {
+  padding: 16px;
+}
+
+.videoTags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  background: var(--color-text-primary);
+  color: var(--color-surface);
+}
+
+.tagMandatory {
+  background: var(--color-text-primary);
+}
+
+.tagSkills {
+  background: var(--color-info);
+}
+
+.videoTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+
+.videoMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  margin-top: 12px;
+  height: 4px;
+  background: var(--color-background);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--color-success);
+  border-radius: 2px;
+  transition: width 0.3s;
+}

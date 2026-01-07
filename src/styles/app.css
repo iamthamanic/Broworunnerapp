@@ -1,0 +1,41 @@
+/* Global app styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+}
+
+/* Mobile-first responsive design */
+@media (min-width: 768px) {
+  body {
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Prevent pull-to-refresh on mobile */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* Improve touch targets for mobile */
+button,
+a {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Smooth scrolling */
+* {
+  scroll-behavior: smooth;
+}

@@ -1,0 +1,447 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-md);
+}
+
+.modalContent {
+  background: var(--background);
+  border-radius: var(--radius-modal);
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border);
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--foreground);
+  padding: var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-button);
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.tabSection {
+  display: flex;
+  gap: 8px;
+  margin: var(--space-md);
+  margin-bottom: 16px;
+  padding: 4px;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-button);
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(60, 97, 188, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+.activeTab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  background: var(--app-primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-button);
+  box-shadow: 0 2px 4px rgba(60, 97, 188, 0.3);
+  transition: all 0.2s;
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+.tabBadgeGreen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: #22c55e;
+  color: white;
+  border-radius: var(--radius-button);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+
+.uploadSection {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.uploadButton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  background: var(--app-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s;
+
+  &:hover {
+    background: #2d4a8f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(60, 97, 188, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  span {
+    font-size: 0.9rem;
+  }
+}
+
+.documentsSection {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-md);
+  min-height: 300px;
+}
+
+.photoSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-lg);
+  padding: var(--space-sm);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.photoSlot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.slotLabel {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  text-align: center;
+  padding: var(--space-xs);
+}
+
+.emptySlot {
+  aspect-ratio: 1;
+  background: var(--muted);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--muted-foreground);
+
+  &:hover {
+    background: var(--background);
+    border-color: var(--app-primary);
+    color: var(--app-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  span {
+    font-size: 0.75rem;
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.slotImage {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--background);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    .deleteSlotButton {
+      opacity: 1;
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.deleteSlotButton {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: var(--destructive);
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  padding: var(--space-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    opacity: 1;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.count {
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.completeBadge {
+  margin-left: 8px;
+  padding: 4px 10px;
+  background: #22c55e;
+  color: white;
+  border-radius: var(--radius-button);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+
+.incompleteBadge {
+  margin-left: 8px;
+  padding: 4px 10px;
+  background: #ef4444;
+  color: white;
+  border-radius: var(--radius-button);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.doneButton {
+  background: var(--app-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  padding: var(--space-sm) var(--space-lg);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #2d4a8f;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.protocolSection {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  min-height: 300px;
+}
+
+.protocolField {
+  margin-bottom: var(--space-md);
+
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--foreground);
+    margin-bottom: var(--space-xs);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    font-size: 0.95rem;
+    background: var(--background);
+    color: var(--foreground);
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--app-primary);
+      box-shadow: 0 0 0 3px rgba(60, 97, 188, 0.1);
+    }
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  input[type='number'] {
+    max-width: 200px;
+  }
+}
+
+.saveButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 14px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: var(--space-md);
+
+  &:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.saveProtocolButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 14px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: var(--space-md);
+
+  &:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

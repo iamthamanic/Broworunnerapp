@@ -1,0 +1,67 @@
+.mapContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--muted);
+}
+
+.leafletMap {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  border-radius: 12px;
+
+  // Reduce saturation by 50% for less overwhelming map
+  filter: saturate(0.5);
+
+  // Custom Leaflet control styling
+  :global {
+    .leaflet-control-zoom {
+      border: none !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+
+      a {
+        background: var(--background) !important;
+        color: var(--foreground) !important;
+        border: 1px solid var(--border) !important;
+        font-size: 18px !important;
+        transition: all 0.2s !important;
+
+        &:hover {
+          background: var(--app-primary) !important;
+          color: white !important;
+          border-color: var(--app-primary) !important;
+        }
+      }
+
+      a:first-child {
+        border-bottom: none !important;
+        border-top-left-radius: 8px !important;
+        border-top-right-radius: 8px !important;
+      }
+
+      a:last-child {
+        border-bottom-left-radius: 8px !important;
+        border-bottom-right-radius: 8px !important;
+      }
+    }
+
+    .leaflet-popup-content-wrapper {
+      background: var(--background) !important;
+      color: var(--foreground) !important;
+      border-radius: 8px !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .leaflet-popup-tip {
+      background: var(--background) !important;
+    }
+
+    .custom-marker {
+      background: transparent !important;
+      border: none !important;
+    }
+  }
+}
