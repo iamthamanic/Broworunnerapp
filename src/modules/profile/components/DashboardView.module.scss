@@ -1,0 +1,320 @@
+.dashboardContainer {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  overflow-y: auto;
+  height: 100%;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+/* Dashboard Header */
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.headerLeft {
+  flex: 1;
+}
+
+/* Profile Header */
+.profileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  background: white;
+  padding: var(--space-md);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.profileLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+}
+
+.profilePhoto {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+
+.profileInitials {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--app-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  border: 2px solid var(--border);
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.greeting {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  margin-bottom: 4px;
+}
+
+.employeeId {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.buttonGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.myDataButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  color: var(--app-primary);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--app-primary);
+    color: white;
+    border-color: var(--app-primary);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.planungButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  color: var(--app-primary);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--app-primary);
+    color: white;
+    border-color: var(--app-primary);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.unfallmeldenButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: var(--radius-button);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}
+
+.statCard {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.statHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+.statIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  line-height: 1;
+}
+
+.statSubtext {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background-color: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  transition: width 0.3s ease;
+}
+
+/* Organigramm Section */
+.organigrammSection {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-md);
+}
+
+.organigrammHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.organigrammTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.organigrammToggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--muted);
+    border-color: var(--app-primary);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}

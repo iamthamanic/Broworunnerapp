@@ -1,179 +1,112 @@
 .myDataContainer {
-  padding: var(--space-md);
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  max-width: 380px;
-  margin: 0 auto;
-
-  @media (max-width: 768px) {
-    max-width: 100%;
-  }
-}
-
-.timeCard,
-.entriesCard,
-.settingsCard {
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
   padding: var(--space-md);
-  box-shadow: var(--shadow-sm);
+  overflow-y: auto;
+  height: 100%;
 }
 
-.cardHeader {
+/* Sub Tabs */
+.subTabsWrapper {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-xs);
-  margin-bottom: var(--space-md);
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-sm);
 }
 
-.cardIcon {
-  color: var(--app-primary);
-  flex-shrink: 0;
+.subTabsRow {
+  display: flex;
+  gap: var(--space-xs);
 }
 
-.cardTitle {
-  font-size: 1rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--foreground);
-  margin: 0;
-}
-
-/* Time Stats */
-.timeStats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-}
-
-.timeStatItem {
+.subTab {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: 4px;
-}
-
-.timeStatLabel {
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-  font-weight: var(--font-weight-medium);
-}
-
-.timeStatValue {
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--app-primary);
-}
-
-.timeStatTarget {
-  font-size: 0.7rem;
-  color: var(--muted-foreground);
-}
-
-/* Entries List */
-.entriesList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.entryItem {
-  padding: var(--space-sm);
-  background-color: var(--muted);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-}
-
-.entryDate {
-  display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 6px;
+  padding: 12px 8px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--muted-foreground);
   font-size: 0.75rem;
   font-weight: var(--font-weight-medium);
-  color: var(--foreground);
-  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 
   svg {
-    color: var(--app-primary);
+    flex-shrink: 0;
+    color: var(--muted-foreground);
+    transition: color 0.2s ease;
   }
-}
 
-.entryDetails {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-xs);
-  margin-bottom: 4px;
-}
-
-.entryTime {
-  font-size: 0.875rem;
-  color: var(--foreground);
-}
-
-.entryDuration {
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--app-primary);
-}
-
-.entryBreaks {
-  font-size: 0.7rem;
-  color: var(--muted-foreground);
-}
-
-/* Settings List */
-.settingsList {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.settingsItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-sm);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  text-align: left;
-  width: 100%;
+  span {
+    text-align: center;
+    line-height: 1.2;
+  }
 
   &:hover {
-    background-color: var(--muted);
+    border-color: var(--app-primary);
+    color: var(--app-primary);
+
+    svg {
+      color: var(--app-primary);
+    }
   }
 
   &:active {
-    background-color: var(--border);
+    transform: scale(0.98);
   }
 }
 
-.settingsItemLeft {
+.subTabActive {
+  background: var(--app-primary);
+  color: white;
+  border-color: var(--app-primary);
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+
+  svg {
+    color: white;
+  }
+
+  &:hover {
+    background: var(--app-primary);
+    color: white;
+
+    svg {
+      color: white;
+    }
+  }
+}
+
+/* Tab Content */
+.tabContent {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.settingsIcon {
-  color: var(--app-primary);
-  flex-shrink: 0;
+.contentCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
 }
 
-.settingsLabel {
-  font-size: 0.875rem;
+.contentTitle {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-semibold);
   color: var(--foreground);
-  font-weight: var(--font-weight-medium);
+  margin: 0 0 var(--space-md) 0;
 }
 
-.settingsArrow {
-  font-size: 1.5rem;
+.contentPlaceholder {
+  font-size: 0.875rem;
   color: var(--muted-foreground);
-  line-height: 1;
+  margin: 0;
 }

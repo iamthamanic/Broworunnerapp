@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Package, Sticker, Triangle, MoreHorizontal, Search, Download, FileText, X, ChevronRight } from 'lucide-react';
+import { TopBar } from '../../profile/components/TopBar';
 import styles from './MaterialView.module.scss';
 
 type MaterialTab = 'sticker' | 'schilder' | 'sonstiges';
@@ -274,12 +275,8 @@ export function MaterialView(): JSX.Element {
 
   return (
     <div className={styles.materialView}>
+      <TopBar onLogout={() => console.log('Logout')} />
       <div className={styles.header}>
-        <div className={styles.headerTop}>
-          <Package className={styles.headerIcon} size={24} />
-          <h1 className={styles.title}>Material</h1>
-        </div>
-
         <div className={styles.searchBox}>
           <Search className={styles.searchIcon} size={18} />
           <input

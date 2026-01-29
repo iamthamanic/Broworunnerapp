@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, FileText, Clock, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import { BereitschaftModal } from './BereitschaftModal';
 import { BereitschaftDetailModal } from './BereitschaftDetailModal';
 import { MapTab } from './MapTab';
+import { useActivityLog } from '../../../contexts/ActivityLogContext';
 import styles from './BereitschaftView.module.scss';
 
 type BereitschaftTab = 'todo' | 'completed';
@@ -29,12 +30,44 @@ interface BereitschaftEntry {
   completed: boolean;
 }
 
-export function BereitschaftView(): JSX.Element {
+interface BereitschaftViewProps {
+  onNavigateToProfile?: () => void;
+}
+
+export function BereitschaftView({ onNavigateToProfile }: BereitschaftViewProps): JSX.Element {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<BereitschaftTab>('todo');
   const [entries, setEntries] = useState<BereitschaftEntry[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<BereitschaftEntry | null>(null);
   const [editingEntry, setEditingEntry] = useState<BereitschaftEntry | null>(null);
+  const [isClockedIn, setIsClockedIn] = useState(false);
+  const [tourStarted, setTourStarted] = useState(false);
+  const [workTimeSeconds, setWorkTimeSeconds] = useState(0);
+  const { addLog } = useActivityLog();
+
+  const targetHoursPerDay = 8;
+
+  // Timer Effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    
+    if (isClockedIn) {
+      interval = setInterval(() => {
+        setWorkTimeSeconds(prev => prev + 1);
+      }, 1000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isClockedIn]);
+
+  const formatTime = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleSubmit = (data: any) => {
     if (editingEntry) {
@@ -95,6 +128,57 @@ export function BereitschaftView(): JSX.Element {
 
   return (
     <div className={styles.bereitschaftContainer}>
+      <div className={styles.actionButtons}>
+        <button 
+          className={`${styles.actionButton} ${styles.clockInButton} ${isClockedIn ? styles.clockedIn : ''}`}
+          onClick={() => {
+            const newState = !isClockedIn;
+            setIsClockedIn(newState);
+            if (newState) {
+              addLog('Eingestempelt', `Arbeit begonnen um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
+            } else {
+              addLog('Ausgestempelt', `Arbeit beendet um ${new Date().toLocaleTimeString('de-DE')} | Dauer: ${formatTime(workTimeSeconds)}`, 'time');
+              setWorkTimeSeconds(0);
+            }
+          }}
+        >
+          {isClockedIn ? 'Ausstempeln' : 'Einstempeln'}
+        </button>
+        <button 
+          className={`${styles.actionButton} ${styles.startTourButton}`}
+          disabled={!isClockedIn}
+          onClick={() => {
+            const newState = !tourStarted;
+            setTourStarted(newState);
+            if (newState) {
+              addLog('Tour gestartet', `Tour begonnen um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
+            } else {
+              addLog('Tour beendet', `Tour beendet um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
+            }
+          }}
+        >
+          {tourStarted ? 'Tour beenden' : 'Tour starten'}
+        </button>
+      </div>
+
+      {isClockedIn && (
+        <div 
+          className={styles.workTimeTracker}
+          onClick={onNavigateToProfile}
+        >
+          <div className={styles.workTimeContent}>
+            <Clock className={styles.workTimeIcon} size={18} />
+            <div className={styles.workTimeInfo}>
+              <div className={styles.workTimeLabel}>Arbeitszeit heute</div>
+              <div className={styles.workTimeValue}>{formatTime(workTimeSeconds)}</div>
+            </div>
+          </div>
+          <div className={styles.workTimeTarget}>
+            Soll: {targetHoursPerDay}:00:00
+          </div>
+        </div>
+      )}
+
       {/* Compact Map */}
       <div className={styles.compactMapContainer}>
         <MapTab orders={[]} compact />

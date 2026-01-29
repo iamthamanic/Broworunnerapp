@@ -102,10 +102,13 @@
   
   /* Field Service App - Border Radius System */
   --radius-xs: 0.5rem;
-  --radius-card: 1rem;
+  --radius-card: 1.25rem;
   --radius-button: 0.75rem;
-  --radius-modal: 1.25rem;
+  --radius-modal: 1.5rem;
   --radius-input: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-md: 0.875rem;
+  --radius-sm: 0.5rem;
 }
 
 .dark {

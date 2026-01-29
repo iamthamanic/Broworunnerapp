@@ -43,10 +43,10 @@ export function BottomNav({
           activeTab === 'infos' ? styles.navItemActive : ''
         }`}
         onClick={() => onTabChange('infos')}
-        aria-label="Infos"
+        aria-label="Lernzentrum"
       >
         <BookOpen className={styles.navIcon} />
-        <span className={styles.navLabel}>Infos</span>
+        <span className={styles.navLabel}>Lernzentrum</span>
       </button>
 
       <button

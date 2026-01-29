@@ -1,203 +1,246 @@
-.logsContainer {
+.logsViewContainer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
   height: 100%;
-  overflow: hidden;
+  background-color: transparent;
+  overflow-y: auto;
 }
 
+/* Header */
 .logsHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.logsTitle {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.logsCount {
-  font-size: 14px;
-  font-weight: 400;
-  color: #6b7280;
-}
-
-.logsActions {
-  display: flex;
-  gap: 8px;
-}
-
-.actionButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
+  padding: var(--space-md);
   background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: var(--radius-button);
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #f9fafb;
-    color: #1f2937;
-    border-color: #d1d5db;
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.categoryFilter {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 2px;
-  }
-}
-
-.filterChip {
-  padding: 6px 12px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-
-  &:hover {
-    background: #f9fafb;
-    border-color: #d1d5db;
-  }
-
-  &.filterChipActive {
-    background: #3c61bc;
-    color: white;
-    border-color: #3c61bc;
-  }
-}
-
-.logsList {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-right: 4px;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 3px;
-  }
-}
-
-.logEntry {
-  background: white;
-  border: 1px solid #e5e7eb;
   border-radius: var(--radius-card);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-md);
 }
 
-.logHeader {
+.headerLeft {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
-.logCategory {
-  font-size: 11px;
-  font-weight: 600;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+.headerIcon {
+  color: var(--foreground);
 }
 
-.logTimestamp {
-  font-size: 11px;
-  font-weight: 500;
-  color: #6b7280;
-  font-family: 'Courier New', monospace;
-  white-space: nowrap;
+.headerTitle {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--foreground);
+  margin: 0;
 }
 
-.logAction {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1f2937;
-  line-height: 1.4;
+.entriesCount {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+  padding: 6px 12px;
+  background: var(--muted);
+  border-radius: var(--radius-button);
 }
 
-.logDetails {
-  font-size: 13px;
-  color: #6b7280;
-  line-height: 1.4;
-  padding-left: 8px;
-  border-left: 2px solid #e5e7eb;
-}
-
-.emptyState {
+/* Categories List */
+.categoriesList {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
   gap: 12px;
 }
 
-.emptyIcon {
-  color: #d1d5db;
-  width: 48px;
-  height: 48px;
+.categorySection {
+  background: white;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
 }
 
-.emptyText {
-  font-size: 14px;
-  color: #9ca3af;
-  text-align: center;
+.categoryItem {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.categoryItemExpanded {
+  background: var(--muted);
+}
+
+.categoryLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chevron {
+  color: var(--muted-foreground);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chevronRotated {
+  transform: rotate(90deg);
+}
+
+.categoryIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.categoryLabel {
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.categoryCount {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* Category Content */
+.categoryContent {
+  padding: 0 var(--space-md) var(--space-md) var(--space-md);
+  background: #f9fafb;
+  border-top: 1px solid var(--border);
+}
+
+/* Accidents List */
+.accidentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: var(--space-md);
+}
+
+.accidentItem {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-md);
+}
+
+.accidentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.accidentVorgang {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+
+.accidentStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: var(--radius-button);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+.accidentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.accidentRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accidentLabel {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.accidentValue {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+  text-align: right;
+}
+
+/* Work Info List */
+.workInfoList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: var(--space-md);
+}
+
+.workInfoItem {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.workInfoLabel {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.workInfoValue {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .logsViewContainer {
+    padding: var(--space-sm);
+  }
+
+  .logsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .entriesCount {
+    align-self: flex-end;
+  }
+
+  .categoryLabel {
+    font-size: 0.875rem;
+  }
 }

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { ListFilter, CircleAlert, Package, Search, ClipboardList, Clock } from 'lucide-react';
 import { useOrders } from '../hooks/useOrders';
 import { useOrderUploads } from '../../../contexts/OrderUploadsContext';
+import { useActivityLog } from '../../../contexts/ActivityLogContext';
 import { OrderCard } from './OrderCard';
 import { BaustelleView } from './BaustelleView';
 import { BereitschaftView } from './BereitschaftView';
 import { KontrollfahrtView } from './KontrollfahrtView';
 import { MapTab } from './MapTab';
+import { TopBar } from '../../profile/components/TopBar';
 import type { OrderDto } from '../types';
 import styles from './OrderFeed.module.scss';
 
@@ -27,6 +29,7 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
   const [workTimeSeconds, setWorkTimeSeconds] = useState(0);
   const { orders, isLoading, error, refetch } = useOrders();
   const { isOrderCompleted } = useOrderUploads();
+  const { addLog } = useActivityLog();
 
   const targetHoursPerDay = 8;
 
@@ -144,12 +147,8 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
   if (activeTypeTab === 'bereitschaft') {
     return (
       <div className={styles.feedContainer}>
+        <TopBar onLogout={() => console.log('Logout')} />
         <div className={styles.header}>
-          <div className={styles.headerTop}>
-            <ClipboardList className={styles.headerIcon} size={24} />
-            <h1 className={styles.title}>Aufträge</h1>
-          </div>
-
           <div className={styles.badgeRow}>
             <div className={styles.badgeGroup}>
               <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
@@ -204,7 +203,7 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
             </button>
           </div>
         </div>
-        <BereitschaftView />
+        <BereitschaftView onNavigateToProfile={onNavigateToProfile} />
       </div>
     );
   }
@@ -212,12 +211,8 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
   if (activeTypeTab === 'baustelle') {
     return (
       <div className={styles.feedContainer}>
+        <TopBar onLogout={() => console.log('Logout')} />
         <div className={styles.header}>
-          <div className={styles.headerTop}>
-            <ClipboardList className={styles.headerIcon} size={24} />
-            <h1 className={styles.title}>Aufträge</h1>
-          </div>
-
           <div className={styles.badgeRow}>
             <div className={styles.badgeGroup}>
               <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
@@ -272,7 +267,7 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
             </button>
           </div>
         </div>
-        <BaustelleView onOrderClick={onOrderClick} />
+        <BaustelleView onOrderClick={onOrderClick} onNavigateToProfile={onNavigateToProfile} />
       </div>
     );
   }
@@ -280,12 +275,8 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
   if (activeTypeTab === 'kontrollfahrt') {
     return (
       <div className={styles.feedContainer}>
+        <TopBar onLogout={() => console.log('Logout')} />
         <div className={styles.header}>
-          <div className={styles.headerTop}>
-            <ClipboardList className={styles.headerIcon} size={24} />
-            <h1 className={styles.title}>Aufträge</h1>
-          </div>
-
           <div className={styles.badgeRow}>
             <div className={styles.badgeGroup}>
               <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
@@ -340,19 +331,15 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
             </button>
           </div>
         </div>
-        <KontrollfahrtView onOrderClick={onOrderClick} />
+        <KontrollfahrtView onOrderClick={onOrderClick} onNavigateToProfile={onNavigateToProfile} />
       </div>
     );
   }
 
   return (
     <div className={styles.feedContainer}>
+      <TopBar onLogout={() => console.log('Logout')} />
       <div className={styles.header}>
-        <div className={styles.headerTop}>
-          <ClipboardList className={styles.headerIcon} size={24} />
-          <h1 className={styles.title}>Aufträge</h1>
-        </div>
-
         <div className={styles.badgeRow}>
           <div className={styles.badgeGroup}>
             <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
@@ -411,14 +398,31 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
         <div className={styles.actionButtons}>
           <button 
             className={`${styles.actionButton} ${styles.clockInButton} ${isClockedIn ? styles.clockedIn : ''}`}
-            onClick={() => setIsClockedIn(!isClockedIn)}
+            onClick={() => {
+              const newState = !isClockedIn;
+              setIsClockedIn(newState);
+              if (newState) {
+                addLog('Eingestempelt', `Arbeit begonnen um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
+              } else {
+                addLog('Ausgestempelt', `Arbeit beendet um ${new Date().toLocaleTimeString('de-DE')} | Dauer: ${formatTime(workTimeSeconds)}`, 'time');
+                setWorkTimeSeconds(0);
+              }
+            }}
           >
             {isClockedIn ? 'Ausstempeln' : 'Einstempeln'}
           </button>
           <button 
             className={`${styles.actionButton} ${styles.startTourButton}`}
             disabled={!isClockedIn}
-            onClick={() => setTourStarted(!tourStarted)}
+            onClick={() => {
+              const newState = !tourStarted;
+              setTourStarted(newState);
+              if (newState) {
+                addLog('Tour gestartet', `Tour begonnen um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
+              } else {
+                addLog('Tour beendet', `Tour beendet um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
+              }
+            }}
           >
             {tourStarted ? 'Tour beenden' : 'Tour starten'}
           </button>

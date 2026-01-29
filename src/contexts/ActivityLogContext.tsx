@@ -5,7 +5,7 @@ export interface ActivityLogEntry {
   timestamp: number;
   action: string;
   details?: string;
-  category: 'navigation' | 'order' | 'time' | 'upload' | 'system' | 'other';
+  category: 'navigation' | 'order' | 'time' | 'upload' | 'system' | 'alert' | 'other';
 }
 
 interface ActivityLogContextType {

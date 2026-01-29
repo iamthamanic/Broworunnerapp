@@ -1,164 +1,272 @@
-import { useActivityLog } from '../../../contexts/ActivityLogContext';
-import { Trash2, Filter, Download } from 'lucide-react';
 import { useState } from 'react';
-import type { ActivityLogEntry } from '../../../contexts/ActivityLogContext';
+import { ChevronRight, User, Briefcase, Calendar as CalendarIcon, FileText, Gift, Coins as CoinsIcon, Award, GraduationCap, Shield, Info, AlertTriangle, Clock } from 'lucide-react';
+import { useActivityLog } from '../../../contexts/ActivityLogContext';
 import styles from './LogsView.module.scss';
 
+type LogCategory = 
+  | 'personal' 
+  | 'work' 
+  | 'absence' 
+  | 'documents' 
+  | 'benefits' 
+  | 'coins' 
+  | 'achievements' 
+  | 'learning' 
+  | 'permissions' 
+  | 'general'
+  | 'accidents';
+
+interface LogCategoryData {
+  id: LogCategory;
+  label: string;
+  icon: React.ReactNode;
+  count: number;
+  color: string;
+}
+
+interface AccidentReport {
+  id: string;
+  vorgangsnummer: string;
+  datum: string;
+  uhrzeit: string;
+  unfallArt: string;
+  schweregrad: string;
+  ort: string;
+  status: 'in_bearbeitung' | 'abgeschlossen';
+  eingereichtAm: number;
+}
+
+// Mock accident data - in real app this would come from context/API
+const mockAccidents: AccidentReport[] = [
+  {
+    id: '1',
+    vorgangsnummer: 'UNF-12345678',
+    datum: '09.01.2026',
+    uhrzeit: '14:30',
+    unfallArt: 'Arbeitsunfall',
+    schweregrad: 'Leicht',
+    ort: 'Berliner Str. 123, 10715 Berlin',
+    status: 'in_bearbeitung',
+    eingereichtAm: Date.now() - 86400000,
+  },
+];
+
 export function LogsView(): JSX.Element {
-  const { logs, clearLogs } = useActivityLog();
-  const [filterCategory, setFilterCategory] = useState<ActivityLogEntry['category'] | 'all'>('all');
+  const { logs } = useActivityLog();
+  const [expandedCategory, setExpandedCategory] = useState<LogCategory | null>(null);
 
-  const formatTimestamp = (timestamp: number): string => {
+  // Count accidents from activity logs
+  const accidentLogs = logs.filter(log => 
+    log.category === 'alert' || log.action.includes('Unfallmeldung')
+  );
+
+  const categories: LogCategoryData[] = [
+    {
+      id: 'personal',
+      label: 'Persönliche Daten',
+      icon: <User size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'work',
+      label: 'Arbeitsinformationen',
+      icon: <Briefcase size={20} />,
+      count: 2,
+      color: '#3c61bc',
+    },
+    {
+      id: 'absence',
+      label: 'Abwesenheiten',
+      icon: <CalendarIcon size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'documents',
+      label: 'Dokumente',
+      icon: <FileText size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'benefits',
+      label: 'Benefits',
+      icon: <Gift size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'coins',
+      label: 'Coins',
+      icon: <CoinsIcon size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'achievements',
+      label: 'Achievements',
+      icon: <Award size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'learning',
+      label: 'Lernfortschritt',
+      icon: <GraduationCap size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'permissions',
+      label: 'Berechtigungen',
+      icon: <Shield size={20} />,
+      count: 0,
+      color: '#3c61bc',
+    },
+    {
+      id: 'accidents',
+      label: 'Unfälle',
+      icon: <AlertTriangle size={20} />,
+      count: accidentLogs.length,
+      color: '#ef4444',
+    },
+    {
+      id: 'general',
+      label: 'Allgemein',
+      icon: <Info size={20} />,
+      count: 0,
+      color: '#6b7280',
+    },
+  ];
+
+  const totalEntries = categories.reduce((sum, cat) => sum + cat.count, 0);
+
+  const handleCategoryClick = (categoryId: LogCategory) => {
+    setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
+  };
+
+  const formatDate = (timestamp: number): string => {
     const date = new Date(timestamp);
-    
-    // Date: DD.MM.YYYY
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    
-    // Time: HH:MM:SS,MS
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-    const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
-    
-    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds},${milliseconds}`;
+    return date.toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   };
 
-  const getCategoryColor = (category: ActivityLogEntry['category']): string => {
-    switch (category) {
-      case 'navigation': return '#3c61bc';
-      case 'order': return '#22c55e';
-      case 'time': return '#eab308';
-      case 'upload': return '#8b5cf6';
-      case 'system': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
-
-  const getCategoryLabel = (category: ActivityLogEntry['category']): string => {
-    switch (category) {
-      case 'navigation': return 'Navigation';
-      case 'order': return 'Auftrag';
-      case 'time': return 'Zeit';
-      case 'upload': return 'Upload';
-      case 'system': return 'System';
-      default: return 'Sonstiges';
-    }
-  };
-
-  const filteredLogs = filterCategory === 'all' 
-    ? logs 
-    : logs.filter(log => log.category === filterCategory);
-
-  const handleExport = () => {
-    const csvContent = [
-      'Timestamp,Datum,Uhrzeit,Kategorie,Aktion,Details',
-      ...logs.map(log => {
-        const date = new Date(log.timestamp);
-        const dateStr = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
-        const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')},${date.getMilliseconds().toString().padStart(3, '0')}`;
-        return `${log.timestamp},"${dateStr}","${timeStr}","${getCategoryLabel(log.category)}","${log.action}","${log.details || ''}"`;
-      })
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `activity-logs-${Date.now()}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const formatTime = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('de-DE', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   return (
-    <div className={styles.logsContainer}>
-      {/* Header Actions */}
+    <div className={styles.logsViewContainer}>
+      {/* Header */}
       <div className={styles.logsHeader}>
-        <div className={styles.logsTitle}>
-          Aktivitätsprotokoll
-          <span className={styles.logsCount}>({filteredLogs.length})</span>
+        <div className={styles.headerLeft}>
+          <Clock size={24} className={styles.headerIcon} />
+          <h1 className={styles.headerTitle}>Logs</h1>
         </div>
-        <div className={styles.logsActions}>
-          <button className={styles.actionButton} onClick={handleExport} title="Exportieren">
-            <Download size={18} />
-          </button>
-          <button className={styles.actionButton} onClick={clearLogs} title="Alle löschen">
-            <Trash2 size={18} />
-          </button>
+        <div className={styles.entriesCount}>
+          {totalEntries} {totalEntries === 1 ? 'Eintrag' : 'Einträge'}
         </div>
       </div>
 
-      {/* Category Filter */}
-      <div className={styles.categoryFilter}>
-        <button
-          className={`${styles.filterChip} ${filterCategory === 'all' ? styles.filterChipActive : ''}`}
-          onClick={() => setFilterCategory('all')}
-        >
-          Alle
-        </button>
-        <button
-          className={`${styles.filterChip} ${filterCategory === 'navigation' ? styles.filterChipActive : ''}`}
-          onClick={() => setFilterCategory('navigation')}
-        >
-          Navigation
-        </button>
-        <button
-          className={`${styles.filterChip} ${filterCategory === 'order' ? styles.filterChipActive : ''}`}
-          onClick={() => setFilterCategory('order')}
-        >
-          Aufträge
-        </button>
-        <button
-          className={`${styles.filterChip} ${filterCategory === 'time' ? styles.filterChipActive : ''}`}
-          onClick={() => setFilterCategory('time')}
-        >
-          Zeit
-        </button>
-        <button
-          className={`${styles.filterChip} ${filterCategory === 'upload' ? styles.filterChipActive : ''}`}
-          onClick={() => setFilterCategory('upload')}
-        >
-          Upload
-        </button>
-        <button
-          className={`${styles.filterChip} ${filterCategory === 'system' ? styles.filterChipActive : ''}`}
-          onClick={() => setFilterCategory('system')}
-        >
-          System
-        </button>
-      </div>
-
-      {/* Logs List */}
-      <div className={styles.logsList}>
-        {filteredLogs.length === 0 ? (
-          <div className={styles.emptyState}>
-            <Filter className={styles.emptyIcon} />
-            <p className={styles.emptyText}>Keine Aktivitäten aufgezeichnet</p>
-          </div>
-        ) : (
-          filteredLogs.map((log) => (
-            <div key={log.id} className={styles.logEntry}>
-              <div className={styles.logHeader}>
+      {/* Categories List */}
+      <div className={styles.categoriesList}>
+        {categories.map((category) => (
+          <div key={category.id} className={styles.categorySection}>
+            <button
+              className={`${styles.categoryItem} ${
+                expandedCategory === category.id ? styles.categoryItemExpanded : ''
+              }`}
+              onClick={() => handleCategoryClick(category.id)}
+            >
+              <div className={styles.categoryLeft}>
+                <ChevronRight 
+                  size={20} 
+                  className={`${styles.chevron} ${
+                    expandedCategory === category.id ? styles.chevronRotated : ''
+                  }`}
+                />
                 <div 
-                  className={styles.logCategory}
-                  style={{ backgroundColor: getCategoryColor(log.category) }}
+                  className={styles.categoryIcon}
+                  style={{ color: category.color }}
                 >
-                  {getCategoryLabel(log.category)}
+                  {category.icon}
                 </div>
-                <div className={styles.logTimestamp}>
-                  {formatTimestamp(log.timestamp)}
-                </div>
+                <span className={styles.categoryLabel}>{category.label}</span>
               </div>
-              <div className={styles.logAction}>{log.action}</div>
-              {log.details && (
-                <div className={styles.logDetails}>{log.details}</div>
-              )}
-            </div>
-          ))
-        )}
+              <span className={styles.categoryCount}>{category.count}</span>
+            </button>
+
+            {/* Expanded Content */}
+            {expandedCategory === category.id && category.count > 0 && (
+              <div className={styles.categoryContent}>
+                {category.id === 'accidents' && (
+                  <div className={styles.accidentsList}>
+                    {accidentLogs.map((log, index) => (
+                      <div key={log.id} className={styles.accidentItem}>
+                        <div className={styles.accidentHeader}>
+                          <div className={styles.accidentVorgang}>
+                            Vorgangsnummer: UNF-{log.timestamp.toString().slice(-8)}
+                          </div>
+                          <div className={styles.accidentStatus}>
+                            <span className={styles.statusDot}></span>
+                            In Bearbeitung
+                          </div>
+                        </div>
+                        <div className={styles.accidentDetails}>
+                          <div className={styles.accidentRow}>
+                            <span className={styles.accidentLabel}>Datum:</span>
+                            <span className={styles.accidentValue}>
+                              {formatDate(log.timestamp)}
+                            </span>
+                          </div>
+                          <div className={styles.accidentRow}>
+                            <span className={styles.accidentLabel}>Uhrzeit:</span>
+                            <span className={styles.accidentValue}>
+                              {formatTime(log.timestamp)}
+                            </span>
+                          </div>
+                          <div className={styles.accidentRow}>
+                            <span className={styles.accidentLabel}>Art:</span>
+                            <span className={styles.accidentValue}>
+                              {log.details?.split(' - ')[0] || 'Arbeitsunfall'}
+                            </span>
+                          </div>
+                          <div className={styles.accidentRow}>
+                            <span className={styles.accidentLabel}>Eingereicht:</span>
+                            <span className={styles.accidentValue}>
+                              {formatDate(log.timestamp)} um {formatTime(log.timestamp)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {category.id === 'work' && (
+                  <div className={styles.workInfoList}>
+                    <div className={styles.workInfoItem}>
+                      <div className={styles.workInfoLabel}>Letzte Aktualisierung</div>
+                      <div className={styles.workInfoValue}>08.01.2026, 09:15 Uhr</div>
+                    </div>
+                    <div className={styles.workInfoItem}>
+                      <div className={styles.workInfoLabel}>Status</div>
+                      <div className={styles.workInfoValue}>Aktiv</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

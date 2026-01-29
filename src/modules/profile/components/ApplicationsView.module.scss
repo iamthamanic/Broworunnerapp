@@ -1,0 +1,269 @@
+.applicationsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.applicationsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.applicationsTitle {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--foreground);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.applicationsSubtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.newApplicationButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 10px 16px;
+  background: var(--app-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.applicationsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.applicationCard {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  align-items: center;
+}
+
+.applicationIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--app-primary-light, #e8eef7);
+  border-radius: var(--radius-md);
+  color: var(--app-primary);
+  flex-shrink: 0;
+}
+
+.applicationContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.applicationTitle {
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  margin: 0;
+}
+
+.applicationMeta {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.applicationDate {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+
+  svg {
+    color: var(--app-primary);
+  }
+}
+
+.applicationAmount {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--app-primary);
+}
+
+.applicationStatus {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+/* New Application Form */
+.newApplicationForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.formTitle {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--foreground);
+  margin: 0;
+}
+
+.closeButton {
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.typeSelector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.typeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.typeButtonActive {
+  border-color: var(--app-primary);
+  background: var(--app-primary-light, #e8eef7);
+  color: var(--app-primary);
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.fieldLabel {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.fieldInput,
+.fieldTextarea {
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--foreground);
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: var(--app-primary);
+  }
+}
+
+.fieldTextarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.submitButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 12px 24px;
+  background: var(--app-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

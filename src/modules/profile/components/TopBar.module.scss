@@ -1,0 +1,58 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--app-primary);
+  border-radius: var(--radius-md);
+  color: white;
+}
+
+.logoText {
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--foreground);
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--muted);
+    border-color: var(--app-primary);
+    color: var(--app-primary);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

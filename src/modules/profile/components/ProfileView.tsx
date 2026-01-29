@@ -2,9 +2,17 @@ import { useState } from 'react';
 import { Settings, Bell, CircleHelp, FileText, LogOut, ChevronRight, Clock, Calendar, TrendingUp } from 'lucide-react';
 import { PlanningView } from '../../orders/components/PlanningView';
 import { MyDataView } from '../../orders/components/MyDataView';
+import { LogsView } from './LogsView';
+import { DashboardView } from './DashboardView';
+import { BenefitsView } from './BenefitsView';
+import { ApplicationsView } from './ApplicationsView';
+import { UnfallmeldenView } from './UnfallmeldenView';
+import { TopBar } from './TopBar';
 import styles from './ProfileView.module.scss';
 
-type ProfileTab = 'planning' | 'mydata';
+type ProfileTab = 'dashboard' | 'benefits' | 'applications' | 'mydata' | 'unfallmelden' | 'planung';
+type BenefitsSubTab = 'applications' | 'benefits';
+type MyDataSubTab = 'mydata' | 'planning';
 
 interface ProfileStats {
   completedToday: number;
@@ -24,6 +32,8 @@ interface TimeEntry {
 interface ProfileViewProps {
   userName: string;
   userRole: string;
+  employeeId?: string;
+  profilePhoto?: string;
   stats: ProfileStats;
   currentWorkTime?: string;
   todayWorkTime?: string;
@@ -41,6 +51,8 @@ interface ProfileViewProps {
 export function ProfileView({
   userName,
   userRole,
+  employeeId,
+  profilePhoto,
   stats,
   currentWorkTime,
   todayWorkTime,
@@ -54,7 +66,9 @@ export function ProfileView({
   onDocumentsClick,
   onLogout,
 }: ProfileViewProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<ProfileTab>('planning');
+  const [activeTab, setActiveTab] = useState<ProfileTab>('dashboard');
+  const [activeBenefitsSubTab, setActiveBenefitsSubTab] = useState<BenefitsSubTab>('applications');
+  const [activeMyDataSubTab, setActiveMyDataSubTab] = useState<MyDataSubTab>('mydata');
 
   const getInitials = (name: string): string => {
     return name
@@ -67,51 +81,66 @@ export function ProfileView({
 
   return (
     <div className={styles.profileContainer}>
-      <div className={styles.header}>
-        <div className={styles.profileInfo}>
-          <div className={styles.avatar}>{getInitials(userName)}</div>
-          <div className={styles.userInfo}>
-            <div className={styles.userName}>{userName}</div>
-            <div className={styles.userRole}>{userRole}</div>
-          </div>
-        </div>
+      <TopBar onLogout={onLogout} />
 
-        {/* Profile Tabs */}
-        <div className={styles.profileTabs}>
-          <button
-            className={`${styles.profileTab} ${
-              activeTab === 'planning' ? styles.profileTabActive : ''
-            }`}
-            onClick={() => setActiveTab('planning')}
-          >
-            In Planung
-          </button>
-          <button
-            className={`${styles.profileTab} ${
-              activeTab === 'mydata' ? styles.profileTabActive : ''
-            }`}
-            onClick={() => setActiveTab('mydata')}
-          >
-            Meine Daten
-          </button>
-        </div>
+      {/* Profile Tabs - outside header */}
+      <div className={styles.profileTabs}>
+        <button
+          className={`${styles.profileTab} ${
+            activeTab === 'dashboard' ? styles.profileTabActive : ''
+          }`}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          Dashboard
+        </button>
+        <button
+          className={`${styles.profileTab} ${
+            activeTab === 'benefits' ? styles.profileTabActive : ''
+          }`}
+          onClick={() => setActiveTab('benefits')}
+        >
+          Benefits
+        </button>
+        <button
+          className={`${styles.profileTab} ${
+            activeTab === 'applications' ? styles.profileTabActive : ''
+          }`}
+          onClick={() => setActiveTab('applications')}
+        >
+          Anträge
+        </button>
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'planning' && <PlanningView />}
-      
-      {activeTab === 'mydata' && (
-        <MyDataView
-          todayWorkTime={todayWorkTime}
-          weekWorkTime={weekWorkTime}
-          monthWorkTime={monthWorkTime}
-          targetHoursPerDay={targetHoursPerDay}
-          timeEntries={timeEntries}
-          onSettingsClick={onSettingsClick}
-          onNotificationsClick={onNotificationsClick}
-          onDocumentsClick={onDocumentsClick}
-          onHelpClick={onHelpClick}
+      {activeTab === 'dashboard' && (
+        <DashboardView 
+          userName={userName}
+          employeeId={employeeId}
+          profilePhoto={profilePhoto}
+          onMyDataClick={() => setActiveTab('mydata')}
+          onPlanungClick={() => setActiveTab('planung')}
+          onUnfallmeldenClick={() => setActiveTab('unfallmelden')}
         />
+      )}
+
+      {activeTab === 'mydata' && (
+        <MyDataView />
+      )}
+
+      {activeTab === 'benefits' && (
+        <BenefitsView />
+      )}
+
+      {activeTab === 'applications' && (
+        <ApplicationsView />
+      )}
+
+      {activeTab === 'unfallmelden' && (
+        <UnfallmeldenView onBack={() => setActiveTab('dashboard')} />
+      )}
+
+      {activeTab === 'planung' && (
+        <PlanningView />
       )}
     </div>
   );

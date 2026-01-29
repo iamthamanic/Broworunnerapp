@@ -59,7 +59,7 @@
   transition: all 0.2s ease;
   text-align: center;
 
-  &:hover {
+  &:hover:not(.viewTabActive) {
     background: var(--color-surface-elevated);
     border-color: var(--app-primary);
   }
@@ -75,6 +75,11 @@
   color: white;
   border-color: var(--app-primary);
   box-shadow: 0 2px 4px rgba(60, 97, 188, 0.3);
+
+  &:hover {
+    background: #2d4a8f;
+    border-color: #2d4a8f;
+  }
 }
 
 .tabBadgeContainer {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { OrderUploadsProvider } from '../contexts/OrderUploadsContext';
 import { MapProviderProvider } from '../contexts/MapProviderContext';
+import { ActivityLogProvider, useActivityLog } from '../contexts/ActivityLogContext';
 import { OrderFeed } from '../modules/orders/components/OrderFeed';
 import { OrderDetailPage } from '../modules/orders/pages/OrderDetailPage';
 import { MaterialView } from '../modules/material/components/MaterialView';
@@ -13,16 +14,23 @@ import styles from './App.module.scss';
 
 type NavTab = 'orders' | 'material' | 'infos' | 'profile';
 
-export default function App(): JSX.Element {
+function AppContent(): JSX.Element {
   const [activeTab, setActiveTab] = useState<NavTab>('orders');
   const [selectedOrder, setSelectedOrder] = useState<OrderDto | null>(null);
+  const { addLog } = useActivityLog();
 
   const handleOrderClick = (order: OrderDto): void => {
     setSelectedOrder(order);
+    addLog(
+      `Auftrag geöffnet: ${order.orderNumber}`,
+      `${order.location.street}, ${order.location.city}`,
+      'order'
+    );
   };
 
   const handleBackToFeed = (): void => {
     setSelectedOrder(null);
+    addLog('Zurück zur Auftragsübersicht', undefined, 'navigation');
   };
 
   const handleStartJob = async (orderId: string): Promise<void> => {
@@ -31,8 +39,14 @@ export default function App(): JSX.Element {
         status: 'in-progress',
       });
       setSelectedOrder(updatedOrder);
+      addLog(
+        `Auftrag gestartet: ${updatedOrder.orderNumber}`,
+        `Status: In Bearbeitung`,
+        'order'
+      );
     } catch (error) {
       console.error('Failed to start job:', error);
+      addLog('Fehler beim Starten des Auftrags', String(error), 'system');
     }
   };
 
@@ -43,21 +57,41 @@ export default function App(): JSX.Element {
         completedAt: new Date().toISOString(),
       });
       setSelectedOrder(updatedOrder);
+      addLog(
+        `Auftrag abgeschlossen: ${updatedOrder.orderNumber}`,
+        `Abgeschlossen um ${new Date().toLocaleTimeString('de-DE')}`,
+        'order'
+      );
       setTimeout(() => {
         setSelectedOrder(null);
       }, 1500);
     } catch (error) {
       console.error('Failed to complete job:', error);
+      addLog('Fehler beim Abschließen des Auftrags', String(error), 'system');
     }
   };
 
   const handleTabChange = (tab: NavTab): void => {
     setActiveTab(tab);
     setSelectedOrder(null);
+    
+    const tabNames: Record<NavTab, string> = {
+      orders: 'Aufträge',
+      material: 'Material',
+      infos: 'Infos',
+      profile: 'Profil'
+    };
+    
+    addLog(
+      `Navigation zu ${tabNames[tab]}`,
+      `Tab gewechselt von ${tabNames[activeTab]} zu ${tabNames[tab]}`,
+      'navigation'
+    );
   };
 
   const handleNavigateToProfile = (): void => {
     setActiveTab('profile');
+    addLog('Navigation zu Profil', 'Über Arbeitszeit-Widget', 'navigation');
   };
 
   const renderTabContent = (): JSX.Element => {
@@ -88,6 +122,7 @@ export default function App(): JSX.Element {
         <ProfileView
           userName="Max Mustermann"
           userRole="Verkehrssicherungsmonteur"
+          employeeId="PN-20250001"
           stats={{
             completedToday: 5,
             completedWeek: 23,
@@ -136,16 +171,30 @@ export default function App(): JSX.Element {
   return (
     <MapProviderProvider>
       <OrderUploadsProvider>
-        <div className={styles.app}>
-          <main className={styles.mainContent}>
-            <div className={styles.tabContent}>{renderTabContent()}</div>
-          </main>
-          <BottomNav
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            pendingCount={2}
-          />
-        </div>
+        <ActivityLogProvider>
+          <div className={styles.app}>
+            <main className={styles.mainContent}>
+              <div className={styles.tabContent}>{renderTabContent()}</div>
+            </main>
+            <BottomNav
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              pendingCount={2}
+            />
+          </div>
+        </ActivityLogProvider>
+      </OrderUploadsProvider>
+    </MapProviderProvider>
+  );
+}
+
+export default function App(): JSX.Element {
+  return (
+    <MapProviderProvider>
+      <OrderUploadsProvider>
+        <ActivityLogProvider>
+          <AppContent />
+        </ActivityLogProvider>
       </OrderUploadsProvider>
     </MapProviderProvider>
   );

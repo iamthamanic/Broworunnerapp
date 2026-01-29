@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Search, Play, Clock, Award, BookOpen } from 'lucide-react';
+import { TopBar } from '../../profile/components/TopBar';
 import styles from './InfosView.module.scss';
 
 type InfoTab = 'videos' | 'tests' | 'lerneinheiten' | 'wiki' | 'avatar';
@@ -69,12 +70,8 @@ export function InfosView(): JSX.Element {
 
   return (
     <div className={styles.infosView}>
+      <TopBar onLogout={() => console.log('Logout')} />
       <div className={styles.header}>
-        <div className={styles.headerTop}>
-          <BookOpen className={styles.headerIcon} size={24} />
-          <h1 className={styles.title}>Lernzentrum</h1>
-        </div>
-
         <div className={styles.searchBox}>
           <Search className={styles.searchIcon} size={18} />
           <input
