@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { CircleAlert, Package, Search, Clock, Info } from 'lucide-react';
+import { CircleAlert, Package, Search, Clock, Truck, LogIn, Pause } from 'lucide-react';
 import { useOrders } from '../hooks/useOrders';
 import { useOrderUploads } from '../../../contexts/OrderUploadsContext';
 import { useActivityLog } from '../../../contexts/ActivityLogContext';
 import { OrderCard } from './OrderCard';
 import { MapTab } from './MapTab';
+import { FahrzeugModal } from './FahrzeugModal';
 import { TopBar } from '../../profile/components/TopBar';
 import type { OrderDto } from '../types';
 import styles from './OrderFeed.module.scss';
@@ -23,9 +24,11 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isClockedIn, setIsClockedIn] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [tourStarted, setTourStarted] = useState(false);
   const [workTimeSeconds, setWorkTimeSeconds] = useState(0);
   const [showClockInTooltip, setShowClockInTooltip] = useState(false);
+  const [showFahrzeugModal, setShowFahrzeugModal] = useState(false);
   const { orders, isLoading, error, refetch } = useOrders();
   const { isOrderCompleted } = useOrderUploads();
   const { addLog } = useActivityLog();
@@ -123,20 +126,44 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
 
       <div className={styles.content}>
         <div className={styles.actionButtons}>
-          <button 
+          {/* Einstempeln / Pause */}
+          <button
+            className={`${styles.actionButton} ${isClockedIn ? (isPaused ? styles.pauseActiveButton : styles.clockedInButton) : styles.clockInButton}`}
+            onClick={() => {
+              if (!isClockedIn) {
+                setIsClockedIn(true);
+                setIsPaused(false);
+                addLog('Eingestempelt', `Beginn um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
+              } else {
+                setIsPaused(p => !p);
+                addLog(isPaused ? 'Pause beendet' : 'Pause gestartet', new Date().toLocaleTimeString('de-DE'), 'time');
+              }
+            }}
+          >
+            {isClockedIn ? <Pause size={16} /> : <LogIn size={16} />}
+            {isClockedIn ? (isPaused ? 'Weiter' : 'Pause') : 'Einstempeln'}
+          </button>
+
+          {/* Tour starten */}
+          <button
             className={`${styles.actionButton} ${styles.startTourButton}`}
             disabled={!isClockedIn}
             onClick={() => {
               const newState = !tourStarted;
               setTourStarted(newState);
-              if (newState) {
-                addLog('Tour gestartet', `Tour begonnen um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
-              } else {
-                addLog('Tour beendet', `Tour beendet um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
-              }
+              addLog(newState ? 'Tour gestartet' : 'Tour beendet', new Date().toLocaleTimeString('de-DE'), 'time');
             }}
           >
             {tourStarted ? 'Tour beenden' : 'Tour starten'}
+          </button>
+
+          {/* Fahrzeug */}
+          <button
+            className={`${styles.actionButton} ${styles.fahrzeugButton}`}
+            onClick={() => setShowFahrzeugModal(true)}
+          >
+            <Truck size={16} />
+            Fahrzeug
           </button>
         </div>
 
@@ -261,6 +288,13 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
           ))
         )}
       </div>
+
+      {showFahrzeugModal && (
+        <FahrzeugModal
+          orders={orders}
+          onClose={() => setShowFahrzeugModal(false)}
+        />
+      )}
     </div>
   );
 }
