@@ -656,6 +656,50 @@
   }
 }
 
+/* Inventory */
+.inventoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inventoryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--color-background);
+  border-radius: 8px;
+}
+
+.inventoryWarehouse {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.inventoryBadge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.inventoryBadgeOk {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.inventoryBadgeLow {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+}
+
+.inventoryBadgeEmpty {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
 .sonstigesModalMeta {
   display: flex;
   flex-direction: column;

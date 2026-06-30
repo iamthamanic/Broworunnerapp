@@ -1,7 +1,9 @@
 import { useRef, useState, useEffect } from 'react';
-import { X, Camera, Trash2, Image as ImageIcon, FileText, CheckCircle } from 'lucide-react';
+import { X, Camera, Trash2, Image as ImageIcon, FileText, CheckCircle, MapPin } from 'lucide-react';
 import { useOrderUploads, UploadDocument, AufstellProtocol } from '../../../contexts/OrderUploadsContext';
 import { useOrders } from '../hooks/useOrders';
+import { useUser } from '../../../contexts/UserContext';
+import { LocationPickerModal } from './LocationPickerModal';
 import styles from './DocumentUploadModal.module.scss';
 
 interface DocumentUploadModalProps {
@@ -22,24 +24,89 @@ export function DocumentUploadModal({ orderId, onClose }: DocumentUploadModalPro
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [currentSlot, setCurrentSlot] = useState<PhotoSlotType | null>(null);
   const { orders } = useOrders();
+  const { user } = useUser();
   const { getDocuments, addDocument, removeDocument, getProtocol, saveProtocol } = useOrderUploads();
   const [documents, setDocuments] = useState<UploadDocument[]>(getDocuments(orderId));
   const [activeTab, setActiveTab] = useState<ModalTab>('documents');
-  const [protocol, setProtocol] = useState<AufstellProtocol>(
-    getProtocol(orderId) || {
+  const [geoLocation, setGeoLocation] = useState<string>('');
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
+
+  // Hole aktuelles Datum und Uhrzeit
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const datum = now.toISOString().split('T')[0]; // YYYY-MM-DD
+    const uhrzeit = now.toTimeString().slice(0, 5); // HH:MM
+    return { datum, uhrzeit };
+  };
+
+  const [protocol, setProtocol] = useState<AufstellProtocol>(() => {
+    const existingProtocol = getProtocol(orderId);
+    if (existingProtocol) return existingProtocol;
+
+    const { datum, uhrzeit } = getCurrentDateTime();
+    return {
       orderId,
-      monteurName: '',
-      datum: '',
-      uhrzeit: '',
-      standort: '',
+      monteurName: user.name, // Vom Benutzerkonto
+      datum,
+      uhrzeit,
+      standort: '', // Wird per GPS gefüllt
       anzahlSchilder: undefined,
       besonderheiten: '',
       unterschrift: ''
-    }
-  );
+    };
+  });
 
   const order = orders.find(o => o.id === orderId);
   const isZone = order?.isZone || false;
+
+  // GPS-Position beim Laden der Komponente abrufen
+  useEffect(() => {
+    // Nur ausführen wenn noch kein Standort gesetzt ist
+    if (protocol.standort) return;
+
+    const useFallbackLocation = () => {
+      if (order) {
+        const fallbackLocation = `${order.location.street}, ${order.location.postalCode} ${order.location.city}`;
+        setProtocol(prev => ({
+          ...prev,
+          standort: fallbackLocation
+        }));
+      }
+    };
+
+    // Check if geolocation is available and permissions policy allows it
+    if ('geolocation' in navigator && 'permissions' in navigator) {
+      // Try to get position silently with fallback
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+          setGeoLocation(locationString);
+          setProtocol(prev => ({
+            ...prev,
+            standort: locationString
+          }));
+        },
+        (error) => {
+          // Silent fallback - don't log permission errors
+          if (error.code === error.PERMISSION_DENIED) {
+            console.log('GPS: Standortzugriff nicht erlaubt, verwende Auftragsadresse');
+          } else {
+            console.log('GPS nicht verfügbar, verwende Auftragsadresse');
+          }
+          useFallbackLocation();
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 5000,
+          maximumAge: 300000 // Accept 5 minute old position
+        }
+      );
+    } else {
+      // GPS nicht verfügbar: Verwende Auftragsadresse
+      useFallbackLocation();
+    }
+  }, [order]);
 
   // Definiere Foto-Slots basierend auf Zone oder einzelnes Schild
   const getPhotoSlots = (): PhotoSlot[] => {
@@ -134,6 +201,13 @@ export function DocumentUploadModal({ orderId, onClose }: DocumentUploadModalPro
     setActiveTab('documents');
   };
 
+  const handleLocationConfirm = (location: string) => {
+    setProtocol(prev => ({
+      ...prev,
+      standort: location
+    }));
+  };
+
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -217,7 +291,8 @@ export function DocumentUploadModal({ orderId, onClose }: DocumentUploadModalPro
                 id="monteurName"
                 name="monteurName"
                 value={protocol.monteurName}
-                onChange={handleProtocolChange}
+                disabled
+                style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
               />
             </div>
             <div className={styles.protocolField}>
@@ -242,13 +317,24 @@ export function DocumentUploadModal({ orderId, onClose }: DocumentUploadModalPro
             </div>
             <div className={styles.protocolField}>
               <label htmlFor="standort">Standort:</label>
-              <input
-                type="text"
-                id="standort"
-                name="standort"
-                value={protocol.standort}
-                onChange={handleProtocolChange}
-              />
+              <div className={styles.locationInputGroup}>
+                <input
+                  type="text"
+                  id="standort"
+                  name="standort"
+                  value={protocol.standort}
+                  onChange={handleProtocolChange}
+                  className={styles.locationInput}
+                />
+                <button
+                  type="button"
+                  className={styles.mapButton}
+                  onClick={() => setShowLocationPicker(true)}
+                  title="Auf Karte auswählen"
+                >
+                  <MapPin size={20} />
+                </button>
+              </div>
             </div>
             <div className={styles.protocolField}>
               <label htmlFor="anzahlSchilder">Anzahl Schilder:</label>
@@ -310,6 +396,14 @@ export function DocumentUploadModal({ orderId, onClose }: DocumentUploadModalPro
           </button>
         </div>
       </div>
+
+      {showLocationPicker && (
+        <LocationPickerModal
+          initialLocation={protocol.standort}
+          onConfirm={handleLocationConfirm}
+          onClose={() => setShowLocationPicker(false)}
+        />
+      )}
     </div>
   );
 }

@@ -14,6 +14,11 @@ interface StickerItem {
   uploadDate: string;
 }
 
+interface StockEntry {
+  warehouse: string;
+  count: number;
+}
+
 interface SchildItem {
   id: string;
   name: string;
@@ -21,6 +26,7 @@ interface SchildItem {
   imageUrl: string;
   category: string;
   info: string;
+  stock: StockEntry[];
 }
 
 interface SonstigesItem {
@@ -70,37 +76,57 @@ const mockSticker: StickerItem[] = [
 ];
 
 const mockSchilder: SchildItem[] = [
-  { 
-    id: '1', 
-    name: 'Halteverbot (Zeichen 283)', 
+  {
+    id: '1',
+    name: 'Halteverbot (Zeichen 283)',
     description: 'Absolutes Halteverbot',
     imageUrl: 'https://images.unsplash.com/photo-1586694680938-d95c921c4f3e?w=400',
     category: 'Verkehrszeichen',
-    info: 'StVO Zeichen 283 - Absolutes Halteverbot. Gilt nur auf der Straßenseite, auf der das Zeichen steht.'
+    info: 'StVO Zeichen 283 - Absolutes Halteverbot. Gilt nur auf der Straßenseite, auf der das Zeichen steht.',
+    stock: [
+      { warehouse: 'Lager A', count: 24 },
+      { warehouse: 'Lager B', count: 8 },
+      { warehouse: 'Lager C', count: 0 },
+    ]
   },
-  { 
-    id: '2', 
-    name: 'Baustellenschild (123)', 
+  {
+    id: '2',
+    name: 'Baustellenschild (123)',
     description: 'Baustelle - Gefahrenzeichen',
     imageUrl: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400',
     category: 'Gefahrenzeichen',
-    info: 'Warnt vor einer Baustelle auf der Fahrbahn. Aufstellung in der Regel 150-250m vor der Gefahrenstelle.'
+    info: 'Warnt vor einer Baustelle auf der Fahrbahn. Aufstellung in der Regel 150-250m vor der Gefahrenstelle.',
+    stock: [
+      { warehouse: 'Lager A', count: 6 },
+      { warehouse: 'Lager B', count: 14 },
+      { warehouse: 'Lager C', count: 3 },
+    ]
   },
-  { 
-    id: '3', 
-    name: 'Umleitungsschild (454)', 
+  {
+    id: '3',
+    name: 'Umleitungsschild (454)',
     description: 'Umleitung - Vorwegweiser',
     imageUrl: 'https://images.unsplash.com/photo-1621274790572-7c32596bc67f?w=400',
     category: 'Wegweiser',
-    info: 'Zeigt Umleitungsstrecken bei gesperrten Straßen an. Nummerierung U1-U99.'
+    info: 'Zeigt Umleitungsstrecken bei gesperrten Straßen an. Nummerierung U1-U99.',
+    stock: [
+      { warehouse: 'Lager A', count: 0 },
+      { warehouse: 'Lager B', count: 11 },
+      { warehouse: 'Lager C', count: 5 },
+    ]
   },
-  { 
-    id: '4', 
-    name: 'Geschwindigkeitsbegrenzung (274)', 
+  {
+    id: '4',
+    name: 'Geschwindigkeitsbegrenzung (274)',
     description: 'Zulässige Höchstgeschwindigkeit',
     imageUrl: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400',
     category: 'Verkehrszeichen',
-    info: 'Zeichen 274 - Zulässige Höchstgeschwindigkeit. In verschiedenen km/h-Stufen verfügbar.'
+    info: 'Zeichen 274 - Zulässige Höchstgeschwindigkeit. In verschiedenen km/h-Stufen verfügbar.',
+    stock: [
+      { warehouse: 'Lager A', count: 18 },
+      { warehouse: 'Lager B', count: 0 },
+      { warehouse: 'Lager C', count: 7 },
+    ]
   },
 ];
 
@@ -343,6 +369,20 @@ export function MaterialView(): JSX.Element {
               <h2 className={styles.modalTitle}>{selectedSchild.name}</h2>
               <p className={styles.modalDescription}>{selectedSchild.description}</p>
               
+              <div className={styles.modalInfoSection}>
+                <h3 className={styles.modalInfoTitle}>Lagerbestand</h3>
+                <div className={styles.inventoryList}>
+                  {selectedSchild.stock.map((entry) => (
+                    <div key={entry.warehouse} className={styles.inventoryRow}>
+                      <span className={styles.inventoryWarehouse}>{entry.warehouse}</span>
+                      <span className={`${styles.inventoryBadge} ${entry.count === 0 ? styles.inventoryBadgeEmpty : entry.count <= 5 ? styles.inventoryBadgeLow : styles.inventoryBadgeOk}`}>
+                        {entry.count === 0 ? 'Nicht verfügbar' : `${entry.count} Stück`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className={styles.modalInfoSection}>
                 <h3 className={styles.modalInfoTitle}>Detaillierte Informationen</h3>
                 <p className={styles.modalInfo}>{selectedSchild.info}</p>

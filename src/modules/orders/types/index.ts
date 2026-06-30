@@ -21,6 +21,21 @@ export interface Location {
   };
 }
 
+export interface BaustelleMaterial {
+  id: string;
+  name: string;
+  sollMenge: number;
+  unit: string;
+  imageUrl?: string;
+}
+
+export type SignCode = 'Z283' | 'Z286';
+
+export interface RequiredSign {
+  code: SignCode;
+  label: string;
+}
+
 export interface OrderDto {
   id: string;
   orderNumber: string;
@@ -34,11 +49,19 @@ export interface OrderDto {
   estimatedDuration: number;
   weight: number;
   materials?: string[];
+  baustelleMaterials?: BaustelleMaterial[];
   notes?: string;
   createdAt: string;
   updatedAt: string;
   numberOfSigns?: number; // Anzahl der Schilder (1 oder 2)
   isZone?: boolean; // Ob es eine Zone ist (2 Schilder)
+  requiredSigns?: RequiredSign[]; // Benötigte Halteverbotsschilder (Z283/Z286)
+  validityPeriod?: {
+    dateFrom: string;
+    dateTo: string;
+    timeFrom: string;
+    timeTo: string;
+  };
 }
 
 export interface OrderUpdateDto {

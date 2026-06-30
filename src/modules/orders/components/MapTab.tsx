@@ -8,9 +8,10 @@ import styles from './MapTab.module.scss';
 
 interface MapTabProps {
   orders: OrderDto[];
+  centerCoords?: { lat: number; lon: number } | null;
 }
 
-export function MapTab({ orders }: MapTabProps): JSX.Element {
+export function MapTab({ orders, centerCoords }: MapTabProps): JSX.Element {
   const { provider } = useMapProvider();
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [userPosition, setUserPosition] = useState<Coordinates | null>(null);
@@ -138,6 +139,7 @@ export function MapTab({ orders }: MapTabProps): JSX.Element {
           route={route}
           onMarkerClick={handleMarkerClick}
           zoom={12}
+          center={centerCoords ? { lat: centerCoords.lat, lng: centerCoords.lon } : undefined}
         />
       )}
 

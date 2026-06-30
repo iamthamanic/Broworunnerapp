@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
-import { ListFilter, CircleAlert, Package, Search, ClipboardList, Clock } from 'lucide-react';
+import { CircleAlert, Package, Search, Clock, Info } from 'lucide-react';
 import { useOrders } from '../hooks/useOrders';
 import { useOrderUploads } from '../../../contexts/OrderUploadsContext';
 import { useActivityLog } from '../../../contexts/ActivityLogContext';
 import { OrderCard } from './OrderCard';
-import { BaustelleView } from './BaustelleView';
-import { BereitschaftView } from './BereitschaftView';
-import { KontrollfahrtView } from './KontrollfahrtView';
 import { MapTab } from './MapTab';
 import { TopBar } from '../../profile/components/TopBar';
 import type { OrderDto } from '../types';
 import styles from './OrderFeed.module.scss';
 
-type OrderTypeTab = 'halteverbot' | 'baustelle' | 'bereitschaft' | 'kontrollfahrt';
 type OrderFilterTab = 'todo' | 'completed';
+type CompletedSubTab = 'current-tour' | 'past-tours';
 
 interface OrderFeedProps {
   onOrderClick?: (order: OrderDto) => void;
@@ -21,12 +18,14 @@ interface OrderFeedProps {
 }
 
 export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps): JSX.Element {
-  const [activeTypeTab, setActiveTypeTab] = useState<OrderTypeTab>('halteverbot');
   const [activeFilterTab, setActiveFilterTab] = useState<OrderFilterTab>('todo');
+  const [completedSubTab, setCompletedSubTab] = useState<CompletedSubTab>('current-tour');
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isClockedIn, setIsClockedIn] = useState(false);
   const [tourStarted, setTourStarted] = useState(false);
   const [workTimeSeconds, setWorkTimeSeconds] = useState(0);
+  const [showClockInTooltip, setShowClockInTooltip] = useState(false);
   const { orders, isLoading, error, refetch } = useOrders();
   const { isOrderCompleted } = useOrderUploads();
   const { addLog } = useActivityLog();
@@ -60,31 +59,10 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
     alert(`Nachricht für Auftrag ${orderId} - Chat-Feature kommt bald!`);
   };
 
-  // Filter orders by type
-  const getOrdersByType = (type: OrderTypeTab): OrderDto[] => {
-    switch (type) {
-      case 'halteverbot':
-        return orders.filter(order => order.jobType === 'no-parking-zone');
-      case 'baustelle':
-        return orders.filter(order => 
-          order.jobType === 'road-closure' || 
-          order.jobType === 'traffic-safety' || 
-          order.jobType === 'construction-site'
-        );
-      case 'kontrollfahrt':
-        // Kontrollfahrt hat eigene Aufträge ohne Aufsteller/Abholer
-        return orders.filter(order => order.jobType === 'no-parking-zone'); // TODO: Add proper type
-      case 'bereitschaft':
-        return [];
-      default:
-        return orders;
-    }
-  };
-
-  const filterOrders = (orderList: OrderDto[]): OrderDto[] => {
-    if (!searchQuery) return orderList;
+  const matchesSearchQuery = (order: OrderDto): boolean => {
+    if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
-    return orderList.filter(order => 
+    return (
       order.orderNumber.toLowerCase().includes(query) ||
       order.location.street.toLowerCase().includes(query) ||
       order.location.city.toLowerCase().includes(query) ||
@@ -94,28 +72,23 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
     );
   };
 
-  // Count orders per tab
-  const halteverbotOrders = orders.filter(o => o.jobType === 'no-parking-zone');
-  const baustelleOrders = orders.filter(o => 
-    o.jobType === 'road-closure' || 
-    o.jobType === 'traffic-safety' || 
-    o.jobType === 'construction-site'
-  );
-  const kontrollfahrtOrders = orders.filter(o => o.jobType === 'no-parking-zone'); // TODO: proper type
-
-  // Count ToDo and Completed for each tab
-  const getTabCounts = (orderList: OrderDto[]) => {
-    const todoCount = orderList.filter(o => !isOrderCompleted(o.id)).length;
-    const completedCount = orderList.filter(o => isOrderCompleted(o.id)).length;
-    return { todoCount, completedCount };
+  const filterByCompletionStatus = (order: OrderDto): boolean => {
+    const completed = isOrderCompleted(order.id);
+    if (activeFilterTab === 'todo') return !completed;
+    if (activeFilterTab === 'completed') {
+      if (!completed) return false;
+      return true;
+    }
+    return false;
   };
 
-  const halteverbotCounts = getTabCounts(halteverbotOrders);
-  const baustelleCounts = getTabCounts(baustelleOrders);
-  const kontrollfahrtCounts = getTabCounts(kontrollfahrtOrders);
+  const getFilteredOrders = (): OrderDto[] =>
+    orders.filter(filterByCompletionStatus).filter(matchesSearchQuery);
 
-  const currentOrders = getOrdersByType(activeTypeTab);
-  const filteredOrders = filterOrders(currentOrders);
+  const todoCount = orders.filter(o => !isOrderCompleted(o.id)).length;
+  const completedCount = orders.filter(o => isOrderCompleted(o.id)).length;
+
+  const filteredOrders = getFilteredOrders();
 
   if (isLoading) {
     return (
@@ -143,274 +116,13 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
     );
   }
 
-  // Render Bereitschaft or Baustelle Views
-  if (activeTypeTab === 'bereitschaft') {
-    return (
-      <div className={styles.feedContainer}>
-        <TopBar onLogout={() => console.log('Logout')} />
-        <div className={styles.header}>
-          <div className={styles.badgeRow}>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{halteverbotCounts.completedCount}</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{baustelleCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{baustelleCounts.completedCount}</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>0</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>0</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{kontrollfahrtCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{kontrollfahrtCounts.completedCount}</span>
-            </div>
-          </div>
-
-          <div className={styles.viewTabs}>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'halteverbot' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('halteverbot')}
-            >
-              Halteverbot
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'baustelle' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('baustelle')}
-            >
-              Baustelle
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'bereitschaft' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('bereitschaft')}
-            >
-              Bereitschaft
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'kontrollfahrt' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('kontrollfahrt')}
-            >
-              Kontrolle
-            </button>
-          </div>
-        </div>
-        <BereitschaftView onNavigateToProfile={onNavigateToProfile} />
-      </div>
-    );
-  }
-
-  if (activeTypeTab === 'baustelle') {
-    return (
-      <div className={styles.feedContainer}>
-        <TopBar onLogout={() => console.log('Logout')} />
-        <div className={styles.header}>
-          <div className={styles.badgeRow}>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{halteverbotCounts.completedCount}</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{baustelleCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{baustelleCounts.completedCount}</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>0</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>0</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{kontrollfahrtCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{kontrollfahrtCounts.completedCount}</span>
-            </div>
-          </div>
-
-          <div className={styles.viewTabs}>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'halteverbot' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('halteverbot')}
-            >
-              Halteverbot
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'baustelle' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('baustelle')}
-            >
-              Baustelle
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'bereitschaft' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('bereitschaft')}
-            >
-              Bereitschaft
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'kontrollfahrt' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('kontrollfahrt')}
-            >
-              Kontrolle
-            </button>
-          </div>
-        </div>
-        <BaustelleView onOrderClick={onOrderClick} onNavigateToProfile={onNavigateToProfile} />
-      </div>
-    );
-  }
-
-  if (activeTypeTab === 'kontrollfahrt') {
-    return (
-      <div className={styles.feedContainer}>
-        <TopBar onLogout={() => console.log('Logout')} />
-        <div className={styles.header}>
-          <div className={styles.badgeRow}>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{halteverbotCounts.completedCount}</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{baustelleCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{baustelleCounts.completedCount}</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>0</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>0</span>
-            </div>
-            <div className={styles.badgeGroup}>
-              <span className={styles.tabBadge}>{kontrollfahrtCounts.todoCount}</span>
-              <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{kontrollfahrtCounts.completedCount}</span>
-            </div>
-          </div>
-
-          <div className={styles.viewTabs}>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'halteverbot' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('halteverbot')}
-            >
-              Halteverbot
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'baustelle' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('baustelle')}
-            >
-              Baustelle
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'bereitschaft' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('bereitschaft')}
-            >
-              Bereitschaft
-            </button>
-            <button
-              className={`${styles.viewTab} ${
-                activeTypeTab === 'kontrollfahrt' ? styles.viewTabActive : ''
-              }`}
-              onClick={() => setActiveTypeTab('kontrollfahrt')}
-            >
-              Kontrolle
-            </button>
-          </div>
-        </div>
-        <KontrollfahrtView onOrderClick={onOrderClick} onNavigateToProfile={onNavigateToProfile} />
-      </div>
-    );
-  }
 
   return (
     <div className={styles.feedContainer}>
       <TopBar onLogout={() => console.log('Logout')} />
-      <div className={styles.header}>
-        <div className={styles.badgeRow}>
-          <div className={styles.badgeGroup}>
-            <span className={styles.tabBadge}>{halteverbotCounts.todoCount}</span>
-            <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{halteverbotCounts.completedCount}</span>
-          </div>
-          <div className={styles.badgeGroup}>
-            <span className={styles.tabBadge}>{baustelleCounts.todoCount}</span>
-            <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{baustelleCounts.completedCount}</span>
-          </div>
-          <div className={styles.badgeGroup}>
-            <span className={styles.tabBadge}>0</span>
-            <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>0</span>
-          </div>
-          <div className={styles.badgeGroup}>
-            <span className={styles.tabBadge}>{kontrollfahrtCounts.todoCount}</span>
-            <span className={`${styles.tabBadge} ${styles.tabBadgeGreen}`}>{kontrollfahrtCounts.completedCount}</span>
-          </div>
-        </div>
-
-        <div className={styles.viewTabs}>
-          <button
-            className={`${styles.viewTab} ${ activeTypeTab === 'halteverbot' ? styles.viewTabActive : ''
-            }`}
-            onClick={() => setActiveTypeTab('halteverbot')}
-          >
-            Halteverbot
-          </button>
-          <button
-            className={`${styles.viewTab} ${
-              activeTypeTab === 'baustelle' ? styles.viewTabActive : ''
-            }`}
-            onClick={() => setActiveTypeTab('baustelle')}
-          >
-            Baustelle
-          </button>
-          <button
-            className={`${styles.viewTab} ${
-              activeTypeTab === 'bereitschaft' ? styles.viewTabActive : ''
-            }`}
-            onClick={() => setActiveTypeTab('bereitschaft')}
-          >
-            Bereitschaft
-          </button>
-          <button
-            className={`${styles.viewTab} ${
-              activeTypeTab === 'kontrollfahrt' ? styles.viewTabActive : ''
-            }`}
-            onClick={() => setActiveTypeTab('kontrollfahrt')}
-          >
-            Kontrolle
-          </button>
-        </div>
-      </div>
 
       <div className={styles.content}>
         <div className={styles.actionButtons}>
-          <button 
-            className={`${styles.actionButton} ${styles.clockInButton} ${isClockedIn ? styles.clockedIn : ''}`}
-            onClick={() => {
-              const newState = !isClockedIn;
-              setIsClockedIn(newState);
-              if (newState) {
-                addLog('Eingestempelt', `Arbeit begonnen um ${new Date().toLocaleTimeString('de-DE')}`, 'time');
-              } else {
-                addLog('Ausgestempelt', `Arbeit beendet um ${new Date().toLocaleTimeString('de-DE')} | Dauer: ${formatTime(workTimeSeconds)}`, 'time');
-                setWorkTimeSeconds(0);
-              }
-            }}
-          >
-            {isClockedIn ? 'Ausstempeln' : 'Einstempeln'}
-          </button>
           <button 
             className={`${styles.actionButton} ${styles.startTourButton}`}
             disabled={!isClockedIn}
@@ -471,7 +183,7 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
           >
             ToDo
             <span className={`${styles.filterTabBadge} ${styles.filterTabBadgeTodo}`}>
-              {filteredOrders.filter(o => !isOrderCompleted(o.id)).length}
+              {todoCount}
             </span>
           </button>
           <button
@@ -482,34 +194,64 @@ export function OrderFeed({ onOrderClick, onNavigateToProfile }: OrderFeedProps)
           >
             Erledigt
             <span className={`${styles.filterTabBadge} ${styles.filterTabBadgeCompleted}`}>
-              {filteredOrders.filter(o => isOrderCompleted(o.id)).length}
+              {completedCount}
             </span>
           </button>
         </div>
 
-        {filteredOrders.filter(order => 
-          activeFilterTab === 'todo' 
-            ? !isOrderCompleted(order.id) 
-            : isOrderCompleted(order.id)
-        ).length === 0 ? (
+        {/* Completed Sub-Tabs */}
+        {activeFilterTab === 'completed' && (
+          <div className={styles.completedSubTabs}>
+            <button
+              className={`${styles.subTab} ${
+                completedSubTab === 'current-tour' ? styles.subTabActive : ''
+              }`}
+              onClick={() => setCompletedSubTab('current-tour')}
+            >
+              Aktuelle Tour
+            </button>
+            <button
+              className={`${styles.subTab} ${
+                completedSubTab === 'past-tours' ? styles.subTabActive : ''
+              }`}
+              onClick={() => setCompletedSubTab('past-tours')}
+            >
+              Vergangene Touren
+            </button>
+          </div>
+        )}
+
+        {/* Date Filter for Past Tours */}
+        {activeFilterTab === 'completed' && completedSubTab === 'past-tours' && (
+          <div className={styles.dateFilterContainer}>
+            <label htmlFor="date-filter" className={styles.dateFilterLabel}>
+              Datum:
+            </label>
+            <input
+              id="date-filter"
+              type="date"
+              className={styles.dateFilterInput}
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </div>
+        )}
+
+        {filteredOrders.length === 0 ? (
           <div className={styles.emptyState}>
             <Package className={styles.emptyIcon} />
             <p className={styles.emptyText}>
-              {activeFilterTab === 'todo' 
-                ? 'Alle Aufträge erledigt!' 
+              {searchQuery
+                ? 'Keine Aufträge gefunden'
+                : activeFilterTab === 'todo'
+                ? 'Alle Aufträge erledigt!'
                 : 'Noch keine erledigten Aufträge'}
             </p>
           </div>
         ) : (
-          filteredOrders
-            .filter(order => 
-              activeFilterTab === 'todo' 
-                ? !isOrderCompleted(order.id) 
-                : isOrderCompleted(order.id)
-            )
-            .map((order, index, arr) => (
-            <OrderCard 
-              key={order.id} 
+          filteredOrders.map((order, index, arr) => (
+            <OrderCard
+              key={order.id}
               order={order}
               orderIndex={index}
               isLastOrder={index === arr.length - 1}

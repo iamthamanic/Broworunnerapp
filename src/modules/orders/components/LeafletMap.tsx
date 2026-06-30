@@ -98,8 +98,8 @@ export function LeafletMap({
   const isUnmountingRef = useRef(false);
 
   // Default center (Berlin, Germany)
-  const defaultCenter: Coordinates = center || { lat: 52.52, lng: 13.405 };
-  const mapCenter = markers.length > 0 ? markers[0].position : defaultCenter;
+  const defaultCenter: Coordinates = { lat: 52.52, lng: 13.405 };
+  const mapCenter = center || (markers.length > 0 ? markers[0].position : defaultCenter);
 
   // Initialize map
   useEffect(() => {
@@ -251,10 +251,45 @@ export function LeafletMap({
     }
   }, [route]);
 
+  // Center map when center prop changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || isUnmountingRef.current) return;
+    if (!center) return;
+
+    mapInstanceRef.current.setView([center.lat, center.lng], 15, {
+      animate: true,
+      duration: 0.5
+    });
+
+    // Add a marker at the centered location
+    if (markersLayerRef.current) {
+      const centerMarker = L.marker([center.lat, center.lng], {
+        icon: L.divIcon({
+          html: `
+            <div style="
+              width: 30px;
+              height: 30px;
+              background: #ef4444;
+              border: 3px solid white;
+              border-radius: 50%;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            "></div>
+          `,
+          className: 'center-marker',
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+        })
+      });
+
+      centerMarker.addTo(markersLayerRef.current);
+    }
+  }, [center]);
+
   // Auto-fit bounds when markers or user position change
   useEffect(() => {
     if (!mapInstanceRef.current || isUnmountingRef.current) return;
     if (markers.length === 0 && !userPosition) return;
+    if (center) return; // Don't auto-fit if we have a specific center
 
     const bounds = L.latLngBounds([]);
 
@@ -271,7 +306,7 @@ export function LeafletMap({
     if (bounds.isValid()) {
       mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
     }
-  }, [markers, userPosition]);
+  }, [markers, userPosition, center]);
 
   return (
     <div className={`${styles.mapContainer} ${className || ''}`}>

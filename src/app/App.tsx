@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { OrderUploadsProvider } from '../contexts/OrderUploadsContext';
 import { MapProviderProvider } from '../contexts/MapProviderContext';
 import { ActivityLogProvider, useActivityLog } from '../contexts/ActivityLogContext';
+import { UserProvider } from '../contexts/UserContext';
 import { OrderFeed } from '../modules/orders/components/OrderFeed';
 import { OrderDetailPage } from '../modules/orders/pages/OrderDetailPage';
 import { MaterialView } from '../modules/material/components/MaterialView';
@@ -190,12 +191,14 @@ function AppContent(): JSX.Element {
 
 export default function App(): JSX.Element {
   return (
-    <MapProviderProvider>
-      <OrderUploadsProvider>
-        <ActivityLogProvider>
-          <AppContent />
-        </ActivityLogProvider>
-      </OrderUploadsProvider>
-    </MapProviderProvider>
+    <UserProvider>
+      <MapProviderProvider>
+        <OrderUploadsProvider>
+          <ActivityLogProvider>
+            <AppContent />
+          </ActivityLogProvider>
+        </OrderUploadsProvider>
+      </MapProviderProvider>
+    </UserProvider>
   );
 }

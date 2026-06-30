@@ -314,6 +314,7 @@
 
 .incompleteBadge {
   margin-left: 8px;
+  margin-right: 12px;
   padding: 4px 10px;
   background: #ef4444;
   color: white;
@@ -387,6 +388,39 @@
 
   input[type='number'] {
     max-width: 200px;
+  }
+}
+
+.locationInputGroup {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.locationInput {
+  flex: 1;
+}
+
+.mapButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: var(--app-primary);
+  border: none;
+  border-radius: var(--radius-button);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #2d4a8f;
+    box-shadow: 0 2px 8px rgba(60, 97, 188, 0.3);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 

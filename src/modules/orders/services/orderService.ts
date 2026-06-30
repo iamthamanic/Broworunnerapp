@@ -1,4 +1,4 @@
-import type { OrderDto, OrderUpdateDto, OrderFilters } from '../types';
+import type { OrderDto, OrderUpdateDto, OrderFilters, BaustelleMaterial } from '../types';
 
 /**
  * Mock API service for orders
@@ -45,6 +45,67 @@ class OrderService {
   }
 
   private getMockOrders(filters?: OrderFilters): OrderDto[] {
+    const materialImages: Record<string, string> = {
+      'Absperrgitter': 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600',
+      'Warnschilder (Z123)': 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600',
+      'Umleitungsschilder (Z454)': 'https://images.unsplash.com/photo-1621274790572-7c32596bc67f?w=600',
+      'Leitkegel': 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600',
+      'Absperrband': 'https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=600',
+      'Pylonen': 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600',
+      'Warnleuchten': 'https://images.unsplash.com/photo-1513828583688-c52646db42da?w=600',
+      'Warntafeln': 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600',
+      'Blinkleuchten': 'https://images.unsplash.com/photo-1513828583688-c52646db42da?w=600',
+      'Schilderständer': 'https://images.unsplash.com/photo-1504253163759-c23fccaebb55?w=600',
+      'Gerüstabsicherung': 'https://images.unsplash.com/photo-1504253163759-c23fccaebb55?w=600',
+    };
+
+    const withImages = (list: BaustelleMaterial[]): BaustelleMaterial[] =>
+      list.map(m => ({ ...m, imageUrl: materialImages[m.name] }));
+
+    const baustelleMaterialienRaw: Record<string, BaustelleMaterial[]> = {
+      '2': [
+        { id: 'm1', name: 'Absperrgitter', sollMenge: 12, unit: 'Stück' },
+        { id: 'm2', name: 'Warnschilder (Z123)', sollMenge: 4, unit: 'Stück' },
+        { id: 'm3', name: 'Umleitungsschilder (Z454)', sollMenge: 6, unit: 'Stück' },
+        { id: 'm4', name: 'Leitkegel', sollMenge: 20, unit: 'Stück' },
+      ],
+      '3': [
+        { id: 'm1', name: 'Absperrband', sollMenge: 50, unit: 'm' },
+        { id: 'm2', name: 'Pylonen', sollMenge: 15, unit: 'Stück' },
+        { id: 'm3', name: 'Warnleuchten', sollMenge: 4, unit: 'Stück' },
+      ],
+      '4': [
+        { id: 'm1', name: 'Absperrgitter', sollMenge: 20, unit: 'Stück' },
+        { id: 'm2', name: 'Warntafeln', sollMenge: 3, unit: 'Stück' },
+        { id: 'm3', name: 'Blinkleuchten', sollMenge: 6, unit: 'Stück' },
+        { id: 'm4', name: 'Schilderständer', sollMenge: 8, unit: 'Stück' },
+      ],
+      '6': [
+        { id: 'm1', name: 'Pylonen', sollMenge: 30, unit: 'Stück' },
+        { id: 'm2', name: 'Absperrband', sollMenge: 80, unit: 'm' },
+      ],
+      '7': [
+        { id: 'm1', name: 'Absperrgitter', sollMenge: 18, unit: 'Stück' },
+        { id: 'm2', name: 'Umleitungsschilder (Z454)', sollMenge: 8, unit: 'Stück' },
+        { id: 'm3', name: 'Warntafeln', sollMenge: 4, unit: 'Stück' },
+        { id: 'm4', name: 'Leitkegel', sollMenge: 25, unit: 'Stück' },
+      ],
+      '8': [
+        { id: 'm1', name: 'Gerüstabsicherung', sollMenge: 10, unit: 'm²' },
+        { id: 'm2', name: 'Warnschilder (Z123)', sollMenge: 2, unit: 'Stück' },
+        { id: 'm3', name: 'Blinkleuchten', sollMenge: 4, unit: 'Stück' },
+      ],
+      '10': [
+        { id: 'm1', name: 'Absperrband', sollMenge: 120, unit: 'm' },
+        { id: 'm2', name: 'Pylonen', sollMenge: 40, unit: 'Stück' },
+        { id: 'm3', name: 'Warntafeln', sollMenge: 6, unit: 'Stück' },
+      ],
+    };
+
+    const baustelleMaterialien: Record<string, BaustelleMaterial[]> = Object.fromEntries(
+      Object.entries(baustelleMaterialienRaw).map(([key, list]) => [key, withImages(list)])
+    );
+
     const mockOrders: OrderDto[] = [
       {
         id: '1',
@@ -69,6 +130,11 @@ class OrderService {
         updatedAt: '2026-01-05T10:00:00Z',
         numberOfSigns: 2,
         isZone: true,
+        requiredSigns: [
+          { code: 'Z283', label: 'Absolutes Halteverbot (Anfang)' },
+          { code: 'Z283', label: 'Absolutes Halteverbot (Ende)' },
+        ],
+        validityPeriod: { dateFrom: '17.05.26', dateTo: '17.05.26', timeFrom: '07.00', timeTo: '17.00' },
       },
       {
         id: '2',
@@ -89,6 +155,7 @@ class OrderService {
         estimatedDuration: 180,
         weight: 15,
         materials: ['Absperrgitter', 'Warnschilder', 'Umleitungsschilder'],
+        baustelleMaterials: baustelleMaterialien['2'],
         createdAt: '2026-01-05T09:00:00Z',
         updatedAt: '2026-01-05T09:00:00Z',
       },
@@ -111,6 +178,7 @@ class OrderService {
         estimatedDuration: 90,
         weight: 8,
         materials: ['Absperrband', 'Pylonen'],
+        baustelleMaterials: baustelleMaterialien['3'],
         createdAt: '2026-01-05T08:00:00Z',
         updatedAt: '2026-01-06T09:15:00Z',
       },
@@ -133,6 +201,7 @@ class OrderService {
         estimatedDuration: 240,
         weight: 20,
         materials: ['Absperrgitter', 'Warntafeln', 'Blinkleuchten'],
+        baustelleMaterials: baustelleMaterialien['4'],
         createdAt: '2026-01-05T11:00:00Z',
         updatedAt: '2026-01-05T11:00:00Z',
       },
@@ -157,6 +226,8 @@ class OrderService {
         materials: ['Schilder', 'Ständer'],
         createdAt: '2026-01-05T12:00:00Z',
         updatedAt: '2026-01-05T12:00:00Z',
+        requiredSigns: [{ code: 'Z283', label: 'Absolutes Halteverbot' }],
+        validityPeriod: { dateFrom: '06.01.26', dateTo: '06.01.26', timeFrom: '10.00', timeTo: '14.00' },
       },
       {
         id: '6',
@@ -177,6 +248,7 @@ class OrderService {
         estimatedDuration: 120,
         weight: 12,
         materials: ['Pylonen', 'Absperrband'],
+        baustelleMaterials: baustelleMaterialien['6'],
         createdAt: '2026-01-05T13:00:00Z',
         updatedAt: '2026-01-05T13:00:00Z',
       },
@@ -199,6 +271,7 @@ class OrderService {
         estimatedDuration: 300,
         weight: 18,
         materials: ['Absperrgitter', 'Umleitungsschilder', 'Warntafeln'],
+        baustelleMaterials: baustelleMaterialien['7'],
         createdAt: '2026-01-05T14:00:00Z',
         updatedAt: '2026-01-05T14:00:00Z',
       },
@@ -221,6 +294,7 @@ class OrderService {
         estimatedDuration: 150,
         weight: 16,
         materials: ['Gerüstabsicherung', 'Warnschilder', 'Blinkleuchten'],
+        baustelleMaterials: baustelleMaterialien['8'],
         createdAt: '2026-01-05T15:00:00Z',
         updatedAt: '2026-01-05T15:00:00Z',
       },
@@ -245,6 +319,8 @@ class OrderService {
         materials: ['Schilder', 'Ständer', 'Blinkleuchten'],
         createdAt: '2026-01-06T07:00:00Z',
         updatedAt: '2026-01-06T07:00:00Z',
+        requiredSigns: [{ code: 'Z286', label: 'Eingeschränktes Halteverbot' }],
+        validityPeriod: { dateFrom: '06.01.26', dateTo: '07.01.26', timeFrom: '08.00', timeTo: '18.00' },
       },
       {
         id: '10',
@@ -265,6 +341,7 @@ class OrderService {
         estimatedDuration: 180,
         weight: 14,
         materials: ['Absperrband', 'Pylonen', 'Warntafeln'],
+        baustelleMaterials: baustelleMaterialien['10'],
         createdAt: '2026-01-05T16:00:00Z',
         updatedAt: '2026-01-05T16:00:00Z',
       },
@@ -287,6 +364,8 @@ class OrderService {
         estimatedDuration: 60,
         weight: 5,
         materials: ['Schilder', 'Ständer'],
+        requiredSigns: [{ code: 'Z283', label: 'Absolutes Halteverbot' }],
+        validityPeriod: { dateFrom: '06.01.26', dateTo: '06.01.26', timeFrom: '07.00', timeTo: '15.00' },
         createdAt: '2026-01-05T17:00:00Z',
         updatedAt: '2026-01-05T17:00:00Z',
       },
@@ -375,6 +454,8 @@ class OrderService {
         estimatedDuration: 45,
         weight: 5,
         materials: ['Schilder', 'Ständer'],
+        requiredSigns: [{ code: 'Z283', label: 'Absolutes Halteverbot' }],
+        validityPeriod: { dateFrom: '06.01.26', dateTo: '06.01.26', timeFrom: '09.00', timeTo: '17.00' },
         createdAt: '2026-01-06T08:00:00Z',
         updatedAt: '2026-01-06T08:00:00Z',
       },
@@ -441,6 +522,8 @@ class OrderService {
         estimatedDuration: 30,
         weight: 4,
         materials: ['Schilder', 'Ständer'],
+        requiredSigns: [{ code: 'Z286', label: 'Eingeschränktes Halteverbot' }],
+        validityPeriod: { dateFrom: '06.01.26', dateTo: '06.01.26', timeFrom: '18.00', timeTo: '21.00' },
         createdAt: '2026-01-06T11:00:00Z',
         updatedAt: '2026-01-06T11:00:00Z',
       },

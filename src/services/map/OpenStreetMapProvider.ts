@@ -148,28 +148,30 @@ export class OpenStreetMapProvider implements IMapProvider {
           });
         },
         (error) => {
-          // Better error handling
-          let errorMessage = 'Geolocation error: ';
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMessage += 'User denied the request for Geolocation.';
-              break;
-            case error.POSITION_UNAVAILABLE:
-              errorMessage += 'Location information is unavailable.';
-              break;
-            case error.TIMEOUT:
-              errorMessage += 'The request to get user location timed out.';
-              break;
-            default:
-              errorMessage += 'An unknown error occurred.';
+          // Silent error handling - only log in development
+          if (process.env.NODE_ENV === 'development') {
+            let errorMessage = 'GPS: ';
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                errorMessage += 'Standortzugriff nicht erlaubt';
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMessage += 'Position nicht verfügbar';
+                break;
+              case error.TIMEOUT:
+                errorMessage += 'Timeout';
+                break;
+              default:
+                errorMessage += 'Unbekannter Fehler';
           }
-          console.warn(errorMessage);
+            console.log(errorMessage);
+          }
           resolve(null);
         },
         {
-          enableHighAccuracy: false, // Changed to false for better compatibility
-          timeout: 10000, // Increased timeout
-          maximumAge: 30000, // Allow cached position
+          enableHighAccuracy: false,
+          timeout: 5000,
+          maximumAge: 300000 // Accept 5 minute old position
         }
       );
     });

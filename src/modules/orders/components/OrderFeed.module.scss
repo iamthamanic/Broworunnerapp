@@ -468,6 +468,97 @@
   box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
 }
 
+// Sub-Tabs unter Erledigt
+.completedSubTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 0 4px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 10px;
+  }
+}
+
+.subTab {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(.subTabActive) {
+    background: var(--color-surface-elevated);
+    border-color: var(--app-primary);
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+.subTabActive {
+  background: var(--app-primary);
+  color: white;
+  border-color: var(--app-primary);
+  box-shadow: 0 1px 3px rgba(60, 97, 188, 0.3);
+}
+
+// Datumsfilter
+.dateFilterContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+
+  @media (max-width: 768px) {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+.dateFilterLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+}
+
+.dateFilterInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  font-size: 14px;
+  color: var(--color-text-primary);
+  background: var(--background);
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: var(--app-primary);
+    box-shadow: 0 0 0 3px rgba(60, 97, 188, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
 .emptyState {
   display: flex;
   flex-direction: column;

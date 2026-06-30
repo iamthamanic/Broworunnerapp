@@ -1,4 +1,8 @@
-import { ArrowLeft, MapPin, Clock, Timer } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, MapPin, X } from 'lucide-react';
+import { MaterialInventorySection } from '../components/MaterialInventorySection';
+import { VerkehrszeichenSign } from '../components/VerkehrszeichenSign';
+import { ImageWithFallback } from '../../../app/components/figma/ImageWithFallback';
 import type { OrderDto } from '../types';
 import styles from './OrderDetailPage.module.scss';
 
@@ -15,6 +19,8 @@ export function OrderDetailPage({
   onStartJob,
   onCompleteJob,
 }: OrderDetailPageProps): JSX.Element {
+  const [zoomedImage, setZoomedImage] = useState<{ url: string; name: string } | null>(null);
+
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('de-DE', {
       day: '2-digit',
@@ -70,6 +76,23 @@ export function OrderDetailPage({
       </div>
 
       <div className={styles.content}>
+        {order.requiredSigns && order.requiredSigns.length > 0 && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Benötigte Schilder</h2>
+            <div className={styles.signGrid}>
+              {order.requiredSigns.map((sign, index) => (
+                <div key={index} className={styles.signCard}>
+                  <VerkehrszeichenSign code={sign.code} size={72} />
+                  <div className={styles.signInfo}>
+                    <span className={styles.signCode}>{sign.code}</span>
+                    <span className={styles.signLabel}>{sign.label}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Auftragsinformationen</h2>
           <div className={styles.infoCard}>
@@ -131,17 +154,57 @@ export function OrderDetailPage({
           </div>
         </div>
 
-        {order.materials && order.materials.length > 0 && (
+        {order.baustelleMaterials && order.baustelleMaterials.length > 0 ? (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Materialien (Soll / Ist)</h2>
+            <MaterialInventorySection materials={order.baustelleMaterials} />
+          </div>
+        ) : order.materials && order.materials.length > 0 && (
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>Benötigte Materialien</h2>
             <div className={styles.materialsList}>
-              {order.materials.map((material, index) => (
+              {order.jobType === 'no-parking-zone' ? (() => {
+                const signs = order.isZone ? 2 : (order.numberOfSigns ?? 1);
+                const stones = signs * 2;
+                const halteverbotMaterials = [
+                  { name: 'Halteverbot-Schild', count: signs, imageUrl: 'https://images.unsplash.com/photo-1586694680938-d95c921c4f3e?w=600' },
+                  { name: 'Zusatzschild', count: signs, imageUrl: 'https://images.unsplash.com/photo-1621274790572-7c32596bc67f?w=600' },
+                  { name: 'Stange', count: signs, imageUrl: 'https://images.unsplash.com/photo-1504253163759-c23fccaebb55?w=600' },
+                  { name: 'Standfuß-Stein', count: stones, imageUrl: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600' },
+                ];
+                return halteverbotMaterials.map((m) => (
+                  <div key={m.name} className={styles.materialItem}>
+                    <div className={styles.materialCheck} />
+                    <button
+                      className={styles.materialThumb}
+                      onClick={() => setZoomedImage({ url: m.imageUrl, name: m.name })}
+                      aria-label={`${m.name} vergrößern`}
+                    >
+                      <ImageWithFallback src={m.imageUrl} alt={m.name} />
+                    </button>
+                    <span className={styles.materialText}>{m.name}</span>
+                    <span className={styles.materialCount}>{m.count}×</span>
+                  </div>
+                ));
+              })() : order.materials.map((material, index) => (
                 <div key={index} className={styles.materialItem}>
                   <div className={styles.materialCheck} />
                   <span className={styles.materialText}>{material}</span>
                 </div>
               ))}
             </div>
+
+            {zoomedImage && (
+              <div className={styles.lightbox} onClick={() => setZoomedImage(null)}>
+                <button className={styles.lightboxClose} aria-label="Schließen">
+                  <X size={22} />
+                </button>
+                <div className={styles.lightboxContent} onClick={e => e.stopPropagation()}>
+                  <ImageWithFallback src={zoomedImage.url} alt={zoomedImage.name} />
+                  <span className={styles.lightboxCaption}>{zoomedImage.name}</span>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
